@@ -39,7 +39,7 @@ export default function ClientForm({
     defaultValues: initialData ?? {
       name: "",
       type: "Individual",
-      phoneNumber: "+91",
+      phoneNumber: "",
       email: "",
     },
     mode: "onChange",

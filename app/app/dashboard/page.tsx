@@ -53,12 +53,12 @@ export default function DashboardCountsPage() {
 
       {/* Row 1: plain inline info (side by side, not stacked) */}
       <div className="flex justify-around text-lg font-semibold">
-        <div className="flex items-center gap-2">
-          <span className="text-gray-500">Total Clients:</span>
+        <div className="flex items-center gap-2  bg-slate-200">
+          <span className="text-gray-800" >Total Clients:</span>
           <span>{safeCount("totalClients")}</span>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-gray-500">Total Due Dates:</span>
+        <div className="flex items-center gap-2  bg-slate-200">
+          <span className="text-gray-800 ">Total Due Dates:</span>
           <span>{safeCount("totalDueDates")}</span>
         </div>
       </div>

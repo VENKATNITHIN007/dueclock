@@ -5,10 +5,21 @@ import Link from "next/link";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
  // adjust if necessary
 import { useDeleteDueDate } from "@/hooks/due/useDeleteDueDate"; // adjust if necessary
 import { useUpdateDueStatus } from "@/hooks/due/useUpdateDueStatus"; 
 import { useFetchOtherDueDates } from "@/hooks/dashboard/other";
+import { toast } from "sonner";
 
 // adjust if necessary
 
@@ -56,14 +67,7 @@ export default function WorkPage() {
     router.push(url);
   };
 
-  const onDelete = (id: string) => {
-    if (!confirm("Delete this due date?")) return;
-    deleteDue.mutate(id, {
-      onSuccess: () => {
-        refetch?.();
-      },
-    });
-  };
+  
 
   const onStatusChange = (id: string, status: string) => {
     updateStatus.mutate(
@@ -127,7 +131,35 @@ export default function WorkPage() {
                       <Button size="sm" variant="outline">View</Button>
                     </Link>
 
-                    <Button size="sm" variant="destructive" onClick={() => onDelete(d._id)}>Delete</Button>
+                   {d.status === "completed" && (
+  <AlertDialog>
+    <AlertDialogTrigger asChild>
+      <Button size="sm" variant="destructive">Delete</Button>
+    </AlertDialogTrigger>
+
+    <AlertDialogContent>
+      <AlertDialogHeader>
+        <AlertDialogTitle>Delete {d.title}?</AlertDialogTitle>
+      </AlertDialogHeader>
+      <AlertDialogFooter>
+        <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <AlertDialogAction
+          onClick={() =>
+            deleteDue.mutate(d._id, {
+              onSuccess: () => refetch?.(),
+              onError: (e: any) => {
+             
+                toast.error(e?.error ?? "Delete failed");
+              },
+            })
+          }
+        >
+          Delete
+        </AlertDialogAction>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
+)}
 
                     <select
                       value={d.status ?? "pending"}
@@ -178,7 +210,35 @@ export default function WorkPage() {
                             <Button size="sm" variant="outline">View</Button>
                           </Link>
 
-                          <Button size="sm" variant="destructive" onClick={() => onDelete(d._id)}>Delete</Button>
+                          {d.status === "completed" && (
+  <AlertDialog>
+    <AlertDialogTrigger asChild>
+      <Button size="sm" variant="destructive">Delete</Button>
+    </AlertDialogTrigger>
+
+    <AlertDialogContent>
+      <AlertDialogHeader>
+        <AlertDialogTitle>Delete {d.title}?</AlertDialogTitle>
+      </AlertDialogHeader>
+      <AlertDialogFooter>
+        <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <AlertDialogAction
+          onClick={() =>
+            deleteDue.mutate(d._id, {
+              onSuccess: () => refetch?.(),
+              onError: (e: any) => {
+             
+                toast.error(e?.error ?? "Delete failed");
+              },
+            })
+          }
+        >
+          Delete
+        </AlertDialogAction>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
+)}
                         </div>
                       </td>
                     </tr>

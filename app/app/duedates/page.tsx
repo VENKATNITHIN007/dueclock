@@ -1,24 +1,10 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@/components/ui/alert-dialog"
-
 import { useFetchDueDates } from "@/hooks/due/useFetchDueDates"
-import { useDeleteDueDate } from "@/hooks/due/useDeleteDueDate"
 import { useUpdateDueStatus } from "@/hooks/due/useUpdateDueStatus"
-import { DueType, GroupedDue } from "@/schemas/apiSchemas/dueDateSchema"
 import { DueDateFormDialog } from "@/components/dialogs/DueDateFormDialog"
 
 
@@ -29,14 +15,25 @@ const MONTH_NAMES = [
 
 export default function DueDatesPage() {
   // note: useFetchDueDates is expected to return GroupedDue[] (grouped by server)
-  const { data: grouped, isLoading } = useFetchDueDates() as { data?: GroupedDue[]; isLoading: boolean }
-  const deleteDueDate = useDeleteDueDate()
+  const { data: grouped, isLoading,isError } = useFetchDueDates()
+
   const updateStatus = useUpdateDueStatus()
-  const [selected, setSelected] = useState<DueType| null>(null)
+
 
   if (isLoading) return <p className="p-4">Loading...</p>
-  // if (!grouped || grouped.length === 0) return <p className="p-4">No due dates</p>
-
+  if (isError) return <p className="p-4 text-red-600">Failed to load due dates</p>;
+  if (!grouped || grouped.length === 0) {
+  return (
+    <div className="p-4">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-xl font-bold">Duedates</h1>
+        <DueDateFormDialog />
+      </div>
+      <p>No due dates</p>
+    </div>
+  );
+}
+  
   const onStatusChange = (dueId: string, status: string) => {
     updateStatus.mutate({ dueId, status })
   }
@@ -55,7 +52,7 @@ export default function DueDatesPage() {
            <h1 className="text-xl font-bold">Duedates</h1>
            <DueDateFormDialog />
          </div>
-
+    
       {grouped?.map((group) => (
         <section key={`${group.year}-${String(group.month).padStart(2, "0")}`} className="mb-8">
           <h2 className="text-lg font-semibold mb-4">
@@ -82,39 +79,11 @@ export default function DueDatesPage() {
                   </select>
 
                   <div className="flex gap-2 pt-2">
-                    <Link href={`/duedates/${d._id}`}>
+                    <Link href={`/app/duedates/${d._id}`}>
                       <Button size="sm" variant="outline">View</Button>
                     </Link>
 
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => setSelected(d)}
-                        >
-                          Delete
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Delete {selected?.title}?</AlertDialogTitle>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() =>
-                              selected &&
-                              deleteDueDate.mutate(selected._id, {
-                                onSuccess: () => setSelected(null),
-                              })
-                            }
-                          >
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                    
                   </div>
                 </CardContent>
               </Card>
@@ -151,39 +120,12 @@ export default function DueDatesPage() {
                         </select>
                       </td>
                       <td className="p-3 space-x-2">
-                        <Link href={`/duedates/${d._id}`}>
+                        <Link href={`/app/duedates/${d._id}`}>
                           <Button size="sm" variant="outline">View</Button>
                         </Link>
+                     
 
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              onClick={() => setSelected(d)}
-                            >
-                              Delete
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Delete {selected?.title}?</AlertDialogTitle>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() =>
-                                  selected &&
-                                  deleteDueDate.mutate(selected._id, {
-                                    onSuccess: () => setSelected(null),
-                                  })
-                                }
-                              >
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                        
                       </td>
                     </tr>
                   ))}

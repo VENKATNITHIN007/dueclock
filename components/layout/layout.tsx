@@ -2,7 +2,6 @@
 "use client";
 
 import React, { ReactNode, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Sidebar from "./sidebar/sidebar";
 import Topbar from "./topbar/topbar";
 import BottomBar from "./bottombar/bottombar";
@@ -16,7 +15,7 @@ type AppLayoutProps = {
 };
 
 export default function AppLayout({ children, persistSidebar = false }: AppLayoutProps) {
-  const router = useRouter();
+  
 
   // Visible by default
   const [sidebarVisible, setSidebarVisible] = useState<boolean>(true);
@@ -37,7 +36,6 @@ export default function AppLayout({ children, persistSidebar = false }: AppLayou
     } catch {}
   }, [persistSidebar, sidebarVisible]);
 
-  const handleOpenContact = () => router.push("/contactus");
   const toggleSidebar = () => setSidebarVisible((v) => !v);
 
   return (
@@ -45,14 +43,13 @@ export default function AppLayout({ children, persistSidebar = false }: AppLayou
       {/* Sidebar visible only on md+ and only when sidebarVisible is true */}
       {sidebarVisible && (
         <aside className="hidden md:block md:w-64 border-r bg-white">
-          <Sidebar onOpenContact={handleOpenContact} />
+          <Sidebar  />
         </aside>
       )}
 
       {/* Main area: when sidebar hidden the main expands naturally */}
       <div className="flex-1 flex flex-col min-h-screen">
         <Topbar
-          onOpenContact={handleOpenContact}
           onToggleSidebar={toggleSidebar}
           sidebarVisible={sidebarVisible}
         />

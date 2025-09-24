@@ -6,9 +6,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { Home, Users, CalendarDays } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type SidebarProps = {
-  onOpenContact?: () => void ;
-};
 
 const LINKS = [
   { href: "/app/dashboard", label: "Dashboard", Icon: Home },
@@ -16,7 +13,7 @@ const LINKS = [
   { href: "/app/duedates", label: "Due Dates", Icon: CalendarDays },
 ];
 
-export default function Sidebar({ onOpenContact }: SidebarProps) {
+export default function Sidebar() {
   const pathname = usePathname() ?? "";
   const router = useRouter();
 
@@ -47,16 +44,6 @@ export default function Sidebar({ onOpenContact }: SidebarProps) {
           );
         })}
       </nav>
-
-      <div className="p-3 border-t">
-        <button onClick={() => onOpenContact?.()} className="w-full flex items-center gap-3 rounded-md px-3 py-2 text-sm text-slate-700 hover:bg-slate-100" type="button">
-          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
-            <path d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M7 8l5 3 5-3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          <span>Contact</span>
-        </button>
-      </div>
     </aside>
   );
 }

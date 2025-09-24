@@ -1,23 +1,22 @@
-// hooks/useValidationErrorHandler.ts use f
-"use client"
-import { toast } from "sonner"
-import { FieldValues, UseFormReturn, Path } from "react-hook-form"
+"use client";
+
+import { toast } from "sonner";
+import { FieldValues, UseFormReturn, Path } from "react-hook-form";
 
 export function useValidationErrorHandler<T extends FieldValues>(
   form: UseFormReturn<T>
-) 
-{
-  return (e: any) => {
-    const fe: Record<string, string[]> | undefined = e?.response?.data?.errors?.fieldErrors
-    if (fe) {
-      Object.entries(fe).forEach(([field, messages]) => {
-        form.setError(field as Path<T>, {
-          type: "server",
-          message: (messages as string[])[0],
-        })
-      })
+) {
+  return (err: any) => {
+    // your API throws JSON from res.json()
+    const fieldErrors = err?.errors?.fieldErrors;
+
+    if (fieldErrors) {
+      Object.entries(fieldErrors).forEach(([field, messages]) => {
+        const msg = Array.isArray(messages) ? messages[0] : String(messages);
+        form.setError(field as Path<T>, { type: "server", message: msg });
+      });
     } else {
-      toast(e?.response?.data?.error || "Something went wrong")
+      toast.error(err?.error || err?.message || "Something went wrong");
     }
-  }
+  };
 }

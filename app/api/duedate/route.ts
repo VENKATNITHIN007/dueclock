@@ -23,6 +23,7 @@ export async function GET() {
       {
         $match: {
           userId: new mongoose.Types.ObjectId(session.user.id),
+          status: "pending"
         },
       },
 
@@ -94,7 +95,9 @@ export async function POST(req: NextRequest) {
 
     // ✅ clientId comes from body, not params
     const parsed = dueFormSchemaBackend.safeParse(body)
+    
     if (!parsed.success) {
+      console.log(zodToFieldErrors(parsed.error))
       return NextResponse.json(zodToFieldErrors(parsed.error), { status: 400 })
     }
     

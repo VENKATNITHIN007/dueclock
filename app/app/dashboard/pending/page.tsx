@@ -6,7 +6,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { DueType } from "@/schemas/apiSchemas/dueDateSchema";
-import { useDeleteDueDate } from "@/hooks/due/useDeleteDueDate";
 import { useUpdateDueStatus } from "@/hooks/due/useUpdateDueStatus";
 import { useFetchNotReady } from "@/hooks/dashboard/pending";
 
@@ -19,7 +18,6 @@ export default function NotReadyPage()
 {
 
   const {data, isLoading,isError}=useFetchNotReady();
-  const deleteDueDate = useDeleteDueDate();
   const updateStatus = useUpdateDueStatus();
 
   // which due's contact block is open (one at a time)
@@ -66,17 +64,11 @@ export default function NotReadyPage()
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2">
-                    <Link href={`/duedates/${d._id}`}>
+                    <Link href={`/app/duedates/${d._id}`}>
                       <Button size="sm" variant="outline">View</Button>
                     </Link>
 
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => deleteDueDate.mutate(d._id)}
-                    >
-                      Delete
-                    </Button>
+                   
 
                     <select
                       value={d.status ?? "pending"}
@@ -161,17 +153,11 @@ export default function NotReadyPage()
                       </td>
                       <td className="p-3 align-top">
                         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                          <Link href={`/due-dates/${d._id}`}>
+                          <Link href={`/app/duedates/${d._id}`}>
                             <Button size="sm" variant="outline">View</Button>
                           </Link>
 
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => deleteDueDate.mutate(d._id)}
-                          >
-                            Delete
-                          </Button>
+                          
 
                           <Button size="sm" variant="secondary" onClick={() => toggleExpand(d._id)}>
                             Contact

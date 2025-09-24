@@ -79,29 +79,35 @@ export default function DueDateForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {/* Client Select */}
-        <FormField
-          control={form.control}
-          name="clientId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Client</FormLabel>
-              <FormControl>
-                <select {...field} className="w-full rounded-md border px-3 py-2">
-                  <option value="" disabled>
-                    Select client…
-                  </option>
-                  {clients?.map((c: any) => (
-                    <option key={c._id} value={c._id}>
-                      {c.name} — {c.phoneNumber || c.email}
-                    </option>
-                  ))}
-                </select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
+        {/* Client Select */}
+<FormField
+  control={form.control}
+  name="clientId"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>
+        Client <span className="text-red-500">*</span>
+      </FormLabel>
+      <FormControl>
+        {clients && clients.length > 0 ? (
+          <select {...field} className="w-full rounded-md border px-3 py-2">
+            <option value="">Select client…</option>
+            {clients.map((c: any) => (
+              <option key={c._id} value={c._id}>
+                {c.name} — {c.phoneNumber || c.email}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <b className="text-sm text-muted-foreground">
+            Please add a client first.
+          </b>
+        )}
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
         {/* Title */}
         <FormField
           control={form.control}
