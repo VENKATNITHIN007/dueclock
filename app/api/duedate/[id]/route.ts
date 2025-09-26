@@ -11,7 +11,7 @@ import { DueType } from "@/schemas/apiSchemas/dueDateSchema";
 // ✅ GET a single due date with client populated
 export async function GET(
   req: NextRequest,
- { params }: { params: Promise<{ id: string }> }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -21,7 +21,7 @@ export async function GET(
 
     await connectionToDatabase();
 
-    const { id } = await  params;
+    const { id } = await  context.params;
 
 
     const dueDate = await DueDate.findOne({ _id: id, userId: session.user.id })
@@ -51,7 +51,7 @@ export async function GET(
 // ✅ PATCH with Zod validation
 export async function PATCH(
   req: NextRequest,
-   { params }: { params: Promise<{ id: string }> }
+    context: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -59,7 +59,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id } = await  params;
+    const { id } = await  context.params;
     const body = await req.json();
 
     // validate partial updates
@@ -99,7 +99,7 @@ export async function PATCH(
 // ✅ DELETE
 export async function DELETE(
   req: NextRequest,
-   { params }: { params: Promise<{ id: string }> }
+   context: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -107,7 +107,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id } = await params;
+    const { id } = await context.params;
 
     await connectionToDatabase();
 
