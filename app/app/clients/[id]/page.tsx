@@ -10,7 +10,6 @@ import { useDeleteClient } from "@/hooks/client/useDeleteClient";
 import { ClientFormDialog } from "@/components/dialogs/ClientFormDialog";
 
 import {
-  User,
   Phone,
   Mail as MailIcon,
   Copy,
@@ -27,6 +26,7 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
+import { DueDateFormDialog } from "@/components/dialogs/DueDateFormDialog";
 
 function sanitizePhoneForWa(raw?: string) {
   if (!raw) return null;
@@ -45,9 +45,10 @@ function formatFriendly(dateStr?: string) {
 }
 
 export default function ClientDetailPage() {
-  const { id } = useParams();
+  const params= useParams();
+  const clientId= params.id as string
   const router = useRouter();
-  const { data: client, isLoading } = useFetchClientById(id as string);
+  const { data: client, isLoading } = useFetchClientById(clientId as string);
   const deleteMutation = useDeleteClient();
 
   const [contactOpen, setContactOpen] = useState(false);
@@ -68,6 +69,8 @@ export default function ClientDetailPage() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-8">
+      <DueDateFormDialog clientId={clientId} />
+      
       {/* Client Info Card */}
       <Card className="border rounded-xl shadow-md">
         <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -113,13 +116,7 @@ export default function ClientDetailPage() {
         <CardContent className="space-y-4">
           {/* Key details in a responsive row */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
-            <div className="flex items-center gap-2 text-slate-700 min-w-0">
-              <User size={18} className="text-sky-500 flex-shrink-0" />
-              <div className="truncate">
-                <div className="text-sm font-medium">Type</div>
-                <div className="text-xs text-muted-foreground truncate">{client.type ?? "—"}</div>
-              </div>
-            </div>
+            
 
             <div className="flex items-center gap-2 text-slate-700 min-w-0">
               <Phone size={18} className="text-green-500 flex-shrink-0" />

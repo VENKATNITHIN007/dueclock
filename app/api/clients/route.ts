@@ -10,21 +10,20 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    if (!session?.user?.firmId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
     await connectionToDatabase();
 
     const clients = await Client.aggregate([
       {
         $match: {
-          userId: new mongoose.Types.ObjectId(session.user.id),
+          firmId: new mongoose.Types.ObjectId(session.user?.firmId),
         },
       },
       {
         $lookup: {
-          from: "duedates", // 👈 must be the actual MongoDB collection name (lowercase, plural by default)
+          from: "duedates",
           localField: "_id",
           foreignField: "clientId",
           as: "dueDates",
@@ -37,7 +36,7 @@ export async function GET() {
               $filter: {
                 input: "$dueDates",
                 as: "due",
-                cond: { $ne: ["$$due.status", "completed"] }, // ✅ only count not completed
+                cond: { $ne: ["$$due.status", "completed"] }, 
               },
             },
           },
@@ -63,7 +62,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    if (!session?.user?.firmId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -77,12 +76,10 @@ export async function POST(req: NextRequest) {
     await connectionToDatabase();
 
     const newClient = await Client.create({
-      userId: session.user.id,
-      firmId: session.user.firmId || null,
+      firmId: session.user.firmId,
       name: parsed.data.name.trim(),
       email: parsed.data.email,
       phoneNumber: parsed.data.phoneNumber,
-      type: parsed.data.type || "Individual",
     })
 
     return NextResponse.json(newClient, { status: 201 });

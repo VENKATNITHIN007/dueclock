@@ -1,3 +1,4 @@
+// hooks/dashboard/useFetchDashboard.ts
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
@@ -8,7 +9,7 @@ type DashboardCounts = {
   pendingDues: number;
   urgent: number;
   passed: number;
-  completed: number;
+  completedThisMonth: number; // NEW
 };
 
 export function useFetchDashboard() {

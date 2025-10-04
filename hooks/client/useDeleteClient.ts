@@ -25,6 +25,7 @@ export function useDeleteClient() {
     },
     onSuccess: (_, id ) => {
       qc.invalidateQueries({ queryKey: queryKeys.clients.all })
+        qc.invalidateQueries({ queryKey: queryKeys.dues.all })
       qc.invalidateQueries({ queryKey: queryKeys.clients.detail(id) })
       qc.invalidateQueries({ queryKey: queryKeys.dashboard.counts })
     },

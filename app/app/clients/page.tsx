@@ -77,8 +77,8 @@ export default function ClientsPage() {
               {clients?.map((c) => (
                 <tr key={c._id} className="border-b">
                   <td className="p-3">{c.name}</td>
-                  <td className="p-3">{c.phoneNumber || "—"}</td>
-                  <td className="p-3">{c.email || "—"}</td>
+                  <td className="p-3">{c.phoneNumber || "no phone"}</td>
+                  <td className="p-3">{c.email || "no email"}</td>
                   <td className="p-3 text-red-600 font-medium">
                     {c.pendingDues ?? 0}
                   </td>

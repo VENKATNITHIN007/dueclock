@@ -12,7 +12,7 @@ export default function DashboardCountsPage() {
   const safeCount = (key: string) =>
     isLoading ? "…" : isError || !counts ? 0 : (counts as any)[key] ?? 0;
 
-  // top summary: only these two
+
   const summaryItems = [
     
     { key: "totalClients", label: "Total Clients" },
@@ -20,7 +20,6 @@ export default function DashboardCountsPage() {
 
   ];
 
-  // dashboard colored cards
   const items = [
     {
       key: "urgent",
@@ -28,7 +27,7 @@ export default function DashboardCountsPage() {
       color: "bg-red-500",
       icon: AlertTriangle,
       value: safeCount("urgent"),
-      link: "/app/dashboard/work?filter=urgent",
+      link: "/app/duedates?filter=urgent",
     },
     {
       key: "passed",
@@ -36,31 +35,21 @@ export default function DashboardCountsPage() {
       color: "bg-red-600",
       icon: Clock,
       value: safeCount("passed"),
-      link: "/app/dashboard/work?filter=passed",
+      link: "/app/duedates?filter=overdue",
     },
-    // {
-    //   key: "pending",
-    //   label: "Pending Due Dates",
-    //   color: "bg-sky-600",
-    //   icon: Users,
-    //   value: safeCount("pending"),
-    //   link: "/app/duedates?filter=pending",
-    // },
     {
       key: "completed",
-      label: "Completed",
+      label: "Monthly:Completed",
       color: "bg-green-600",
       icon: CheckCircle,
-      value: safeCount("completed"),
-      link: "/app/dashboard/work?filter=completed",
+      value: safeCount("completedThisMonth"),
+      link: "/app/duedates/completed",
     },
   ];
 
   return (
     <div>
       <h1 className="text-2xl md:text-3xl font-semibold mb-4">Dashboard</h1>
-
-      {/* Top summary counts (responsive) */}
       <div className="mb-6">
         <div className="flex flex-col md:flex-row gap-3 md:gap-4">
           {summaryItems.map((c) => {
@@ -71,7 +60,7 @@ export default function DashboardCountsPage() {
                 className="flex items-center justify-between gap-3 bg-slate-200 rounded-md px-3 py-2 min-w-0 flex-1"
               >
                 <div className="min-w-0">
-                  <div className="text-sm text-gray-700 truncate">{c.label}</div>
+                  <div className="text-sm text-stone-600 truncate">{c.label}</div>
                 </div>
                 <div className="text-lg md:text-xl font-semibold ml-2 flex-shrink-0">
                   {val}

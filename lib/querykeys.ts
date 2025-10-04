@@ -13,10 +13,6 @@ export const queryKeys = {
     profile: ["user"] as const,
   },
   dashboard:{
-    counts:["counts"] as const,
-    urgent:["urgent"] as const,
-    pending:["pendingDues"] as const,
-    completed:["completed"] as const,
-    passed:["passed"] as const
+    counts:["counts"] as const
   }
 }

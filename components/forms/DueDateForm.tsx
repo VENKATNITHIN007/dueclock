@@ -17,31 +17,32 @@ import { toast } from "sonner"
 import { dueFormSchema, dueFormInput } from "@/schemas/formSchemas"
 import { useCreateDueDate } from "@/hooks/due/useCreateDueDate"
 import { useUpdateDueDate } from "@/hooks/due/useUpdateDueDate"
-import { useFetchClients } from "@/hooks/client/useFetchClients"
+//for slecting import { useFetchClients } from "@/hooks/client/useFetchClients"
 import { useValidationErrorHandler } from "@/hooks/useValidationEHandle"
 
 export default function DueDateForm({
   id,
+  clientId,
   initialData,
   onSuccess,
 }: {
   id?: string
+  clientId:string
   initialData?: Partial<dueFormInput>
   onSuccess?: () => void
 }) {
   const form = useForm<dueFormInput>({
     resolver: zodResolver(dueFormSchema),
     defaultValues: {
-      clientId: initialData?.clientId ?? "",
       title: initialData?.title ?? "",
-      description: initialData?.description ?? "",
       date: initialData?.date ?? "",
-      status: initialData?.status ?? "pending", // ✅ required by schema
+      label:initialData?.label ?? "other",
+      recurrence:initialData?.recurrence ?? "none",
     },
     mode: "onChange",
   })
 
-  const { data: clients } = useFetchClients()
+  // for selecting const { data: clients } = useFetchClients()
   const createMutation = useCreateDueDate()
   const updateMutation = useUpdateDueDate()
   const handleError = useValidationErrorHandler(form)
@@ -64,8 +65,14 @@ export default function DueDateForm({
           onError: handleError,
         }
       )
+
+    if (!clientId) {
+    toast.error("Client ID missing")
+    return
+  }
+
     } else {
-      createMutation.mutate(data, {
+      createMutation.mutate({clientId,data}, {
         onSuccess: () => {
           toast("Due created ✅")
           onSuccess?.()
@@ -78,43 +85,14 @@ export default function DueDateForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {/* Client Select */}
-        {/* Client Select */}
-<FormField
-  control={form.control}
-  name="clientId"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>
-        Client <span className="text-red-500">*</span>
-      </FormLabel>
-      <FormControl>
-        {clients && clients.length > 0 ? (
-          <select {...field} className="w-full rounded-md border px-3 py-2">
-            <option value="">Select client…</option>
-            {clients.map((c: any) => (
-              <option key={c._id} value={c._id}>
-                {c.name} — {c.phoneNumber || c.email}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <b className="text-sm text-muted-foreground">
-            Please add a client first.
-          </b>
-        )}
-      </FormControl>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
+        
         {/* Title */}
         <FormField
           control={form.control}
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>Title*</FormLabel>
               <FormControl>
                 <Input {...field} placeholder="Enter title" />
               </FormControl>
@@ -123,20 +101,7 @@ export default function DueDateForm({
           )}
         />
 
-        {/* Description */}
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <textarea {...field} className="w-full rounded-md border px-3 py-2" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        
 
         {/* Date */}
         <FormField
@@ -144,7 +109,7 @@ export default function DueDateForm({
           name="date"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Due Date</FormLabel>
+              <FormLabel>Due Date*</FormLabel>
               <FormControl>
                 <Input type="date" {...field} />
               </FormControl>
@@ -152,24 +117,44 @@ export default function DueDateForm({
             </FormItem>
           )}
         />
-
-        {/* Status */}
         <FormField
           control={form.control}
-          name="status"
+          name="label"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Status</FormLabel>
+              <FormLabel>label*</FormLabel>
               <FormControl>
                 <select {...field} className="w-full rounded-md border px-3 py-2">
-                  <option value="pending">pending</option>
-                  <option value="completed">Completed</option>
+                  <option value="gst">gst</option>
+                  <option value="tds">tds</option>
+                   <option value="pf">pf</option>
+                    <option value="esi">esi</option>
+                  <option value="other">other</option>
                 </select>
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+         <FormField
+          control={form.control}
+          name="recurrence"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>recurrence*</FormLabel>
+              <FormControl>
+                <select {...field} className="w-full rounded-md border px-3 py-2">
+                  <option value="none">none</option>
+                  <option value="monthly">monthly</option>
+                  <option value="quarterly">quarterly</option>
+                  <option value="yearly">yearly</option>
+                </select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
 
         <Button type="submit"  disabled={updateMutation.isPending || createMutation.isPending}>{id
             ? updateMutation.isPending

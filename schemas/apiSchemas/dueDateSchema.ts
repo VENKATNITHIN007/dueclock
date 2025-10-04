@@ -5,8 +5,9 @@ import { ClientType} from "./clientSchema";
  export const dueSchemaApi = z.object({
   _id: z.string(),
   title: z.string(),
-  description: z.string().optional(),
   date: z.string(),
+  label:z.string(),
+  recurrence:z.enum(["none","monthly","quarterly","yearly"]),
   clientId: z.string(),
   firmId: z.string().optional(),
   userId: z.string().optional(),

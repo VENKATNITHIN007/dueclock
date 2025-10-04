@@ -1,11 +1,10 @@
 import mongoose , {Schema, model , models} from "mongoose";
 
+
 export interface IClient{
         name:string;
         phoneNumber?:string;
         email?:string;
-        type?:"Individual"|"Business"
-        userId:mongoose.Types.ObjectId;
         firmId?:mongoose.Types.ObjectId;
         _id?:mongoose.Types.ObjectId;
         createdAt?:Date;
@@ -16,10 +15,7 @@ const clientSchema = new Schema<IClient>({
         name:{type:String, required:true},
         phoneNumber:String,
         email:String,
-        type:{type:String, required:true, enum:["Individual","Business"],default:"Individual" },
-        userId:{type:Schema.Types.ObjectId,required:true, ref:"User"},
-        firmId:{type:Schema.Types.ObjectId, ref:"Firm"},
-
+        firmId:{type:Schema.Types.ObjectId,required:true, ref:"Firm"},
 },{
         timestamps:true
 })

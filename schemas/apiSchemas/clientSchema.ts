@@ -13,8 +13,6 @@ export const clientSchemaApi = z.object({
   name: z.string(),
   phoneNumber: phoneOptional,
   email: z.string().email().optional(),
-  type: z.enum(["Individual", "Business"]).optional(),
-  userId: z.string(),
   firmId: z.string().optional(),
   pendingDues:z.number(),
 }).catchall(z.unknown())

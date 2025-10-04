@@ -14,7 +14,6 @@ export type userProfileFormInput = z.infer<typeof userProfileFormSchema>;
 
 export const clientFormSchema = z.object({
   name: z.string().min(1, { error: "Client name is required" }),
-  type: z.enum(["Individual", "Business"]),
   phoneNumber: phoneOptional,
   email: z.string().email({ error: "Invalid email" })
   .or(z.literal(""))
@@ -24,27 +23,26 @@ export type clientFormInput = z.infer<typeof clientFormSchema>;
 
 export const dueFormSchema = z.object({
   title: z.string().min(1, { error: "Title is required" }),
-  description: z.string().optional(),
   date: z.string().refine((s)=>{const d = new Date(s);
     return !isNaN(d.getTime()) && d > new Date();
   },{
     message:"Date can't be less than today"
   }),
+  label:z.string(),
+  recurrence:z.enum(["none","monthly","quarterly","yearly"]),
   clientId: z.string("client required"
-  ),
-  status: z.enum(["pending", "completed"]),
+  ).optional(),
 });
 export type dueFormInput = z.infer<typeof dueFormSchema>;
 
 export const dueFormSchemaBackend = z.object({
-  clientId: z.string().min(1,"client is requried"),
   title: z.string().min(1, "Title is required"),
-  description: z.string().optional(),
   date: z.coerce.date().refine(
     (d) => d > new Date(),
     "Date must be greater than today"
   ),
-  status: z.enum(["pending", "completed"]).default("pending"),
+  recurrence:z.enum(["none","monthly","quarterly","yearly"]),
+  label:z.string(),
 })
 
 export type DueFormInputBackend = z.infer<typeof dueFormSchemaBackend>

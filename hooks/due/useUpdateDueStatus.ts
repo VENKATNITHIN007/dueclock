@@ -7,7 +7,7 @@ export function useUpdateDueStatus() {
 
   return useMutation({
     mutationFn: async ({ dueId, status }: { dueId: string; status: string }) => {
-      const res = await fetch(`/api/duedate/${dueId}`, {
+      const res = await fetch(`/api/duedate/${dueId}/completed`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }), // ✅ only send status
@@ -39,8 +39,6 @@ export function useUpdateDueStatus() {
       queryClient.invalidateQueries({ queryKey:queryKeys.dues.all  })
        queryClient.invalidateQueries({ queryKey:queryKeys.dues.detail(data._id)  })
        queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.counts })
-       queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.pending })
-       queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.completed })
     },
   })
 }

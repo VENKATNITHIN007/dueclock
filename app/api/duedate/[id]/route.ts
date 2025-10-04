@@ -1,3 +1,4 @@
+
 import { authOptions } from "@/lib/auth";
 import { connectionToDatabase } from "@/lib/db";
 import DueDate from "@/models/DueDate";
@@ -8,54 +9,14 @@ import { zodToFieldErrors } from "@/lib/zodError";
 import {  dueFormSchemaBackend } from "@/schemas/formSchemas";
 import { DueType } from "@/schemas/apiSchemas/dueDateSchema";
 
-// ✅ GET a single due date with client populated
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> } 
-) {
-  try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
-    await connectionToDatabase();
-
-    const { id } = await params;
-
-
-    const dueDate = await DueDate.findOne({ _id: id, userId: session.user.id })
-    .select("-__v -createdAt -updatedAt")
-    .lean<DueType>()
-
-    if (!dueDate) {
-      return NextResponse.json({ error: "Due date not found" }, { status: 404 });
-    }
-    const client = await Client.findById(dueDate.clientId)
-    .select("-__v -createdAt -updatedAt")
-    .lean()
-     if(!client){
-       return NextResponse.json({ error: "client not found for duedate" }, { status: 404 });
-     }
-
-    return NextResponse.json({...dueDate,client},{ status: 200 });
-  } catch (err) {
-    console.error("GET single due date error:", err);
-    return NextResponse.json(
-      { error: "Failed to fetch due date" },
-      { status: 500 }
-    );
-  }
-}
-
-// ✅ PATCH with Zod validation
 export async function PATCH(
   req: NextRequest,
     { params }: { params: Promise<{ id: string }> } 
 ) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    if (!session?.user?.firmId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -67,12 +28,16 @@ export async function PATCH(
     if (!parsed.success) {
       return NextResponse.json(zodToFieldErrors(parsed.error), { status: 400 });
     }
+    if ("status" in parsed.data) {
+      // disallow status changes on this route
+      return NextResponse.json({ error: "Status changes not allowed on this route" }, { status: 400 });
+    }
 
     await connectionToDatabase();
 
     const updateFields = { ...parsed.data };
     const updatedDueDate = await DueDate.findOneAndUpdate(
-      { _id: id, userId: session.user.id },
+      { _id: id, firmId: session.user.firmId },
       { $set: updateFields },
       { new: true }
     )
@@ -103,7 +68,7 @@ export async function DELETE(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    if (!session?.user?.firmId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -113,7 +78,7 @@ export async function DELETE(
 
     const deletedDueDate = await DueDate.findOneAndDelete({
       _id: id,
-      userId: session.user.id,
+      firmId: session.user.firmId,
     });
 
     if (!deletedDueDate) {
@@ -129,7 +94,3 @@ export async function DELETE(
     );
   }
 }
-
-
-
-

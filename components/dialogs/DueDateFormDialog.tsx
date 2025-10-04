@@ -8,8 +8,10 @@ import {DueType} from "@/schemas/apiSchemas/dueDateSchema"
 
 export function DueDateFormDialog({
   due,
+  clientId
 }: {
   due?: DueType
+  clientId:string
 }) {
   const [open, setOpen] = useState(false)
 
@@ -17,7 +19,7 @@ export function DueDateFormDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant={due ? "outline" : "default"}>
-          {due ? "Edit Due Date" : "Add Due Date"}
+          {due ? "Edit" : "Add Due Date"}
         </Button>
       </DialogTrigger>
 
@@ -29,7 +31,9 @@ export function DueDateFormDialog({
         {/* Pass id + initialData if editing */}
         <DueDateForm
           id={due?._id}
+          clientId={clientId}
           initialData={due}
+          
           onSuccess={() => setOpen(false)}
         />
       </DialogContent>

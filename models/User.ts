@@ -1,18 +1,15 @@
 import mongoose , {Schema, model , models} from "mongoose";
 export interface IUser{
+    _id?:mongoose.Types.ObjectId;
+    firmId?:mongoose.Types.ObjectId;
     email:string;
     name:string;
     phoneNumber?:string;
     image?:string;
     googleId?:string;
-    firmId?:mongoose.Types.ObjectId;
-    role?:"solo"|"ca"|"owner",default:"solo";
-    _id?:mongoose.Types.ObjectId;
-    referralCode?:string;
-    referredBy?:string;
+    role?:"owner"|"staff", default:"owner";
     createdAt?:Date;
-    updatedAt?:Date;
-    
+    updatedAt?:Date; 
 }
 
 const userSchema = new Schema<IUser>(
@@ -23,9 +20,7 @@ const userSchema = new Schema<IUser>(
     googleId:String,
     phoneNumber:String,
     firmId:{type:Schema.Types.ObjectId,ref:"Firm" },
-    role:{type:String,enum:["solo","ca","owner"],default:"solo"},
-    referralCode:String,
-    referredBy:String,
+    role:{type:String,enum:["staff","owner"],default:"owner"},
 },
 {
     timestamps:true
