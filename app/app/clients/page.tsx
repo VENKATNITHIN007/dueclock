@@ -38,35 +38,33 @@ export default function ClientsPage() {
       </div>
 
       {/* Mobile: Cards */}
-      <div className="grid gap-4 md:hidden">
-        {clients?.map((c) => (
-          <Card key={c._id} className="rounded-2xl shadow-md">
-            <CardContent className="p-4 space-y-2">
-              <p className="font-semibold text-lg">{c.name}</p>
-              <p className="text-sm text-gray-600">
-                {c.phoneNumber || "No phone"}
-              </p>
-              <p className="text-sm text-gray-600">{c.email || "No email"}</p>
-              <p className="text-sm font-medium text-red-600">
-                Pending Dues: {c.pendingDues}
-              </p>
+      {/* Mobile: Cards */}
+<div className="grid gap-4 md:hidden px-4 pb-24"> 
+  {clients?.map((c) => (
+    <Card key={c._id} className="w-full rounded-2xl shadow-md">
+      <CardContent className="p-4 space-y-2">
+        <p className="font-semibold text-lg">{c.name}</p>
+        <p className="text-sm text-gray-600">
+          {c.phoneNumber || "No phone"}
+        </p>
+        <p className="text-sm text-gray-600">{c.email || "No email"}</p>
+        <p className="text-sm font-medium text-red-600">
+          Pending Dues: {c.pendingDues}
+        </p>
 
-              <div className="flex gap-2 pt-2">
-                <Link href={`/app/clients/${c._id}`}>
-                  <Button size="sm" variant="outline">
-                    View
-                  </Button>
-                </Link>
+        <div className="flex gap-2 pt-2">
+          <Link href={`/app/clients/${c._id}`}>
+            <Button size="sm" variant="outline">
+              View
+            </Button>
+          </Link>
 
-                <ClientFormDialog client={c} />
-
-               
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
+          <ClientFormDialog client={c} />
+        </div>
+      </CardContent>
+    </Card>
+  ))}
+</div>
       {/* Desktop: Table */}
       <div className="hidden md:block">
         <div className="overflow-x-auto rounded-2xl shadow-md">
