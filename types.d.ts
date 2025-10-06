@@ -1,8 +1,13 @@
-import {connection} from "mongoose"
+// global.d.ts
+import type { Connection } from 'mongoose';
+
 declare global {
-    var mongoose: {
-        conn:connection | null;
-        promise:promise<connection> | null;
-    }
+  // store a cached mongoose connection in the global scope (Next.js hot-reload safe)
+  var mongoose: {
+    conn: Connection | null;
+    promise: Promise<Connection> | null;
+  };
 }
-export {}
+
+
+export {};

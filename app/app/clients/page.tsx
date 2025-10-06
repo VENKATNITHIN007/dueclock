@@ -15,7 +15,7 @@ export default function ClientsPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-xl font-bold">Clients</h1>
         <ClientFormDialog />
-      </div>
+      </div>  
       <p>No clients yet</p>
     </div>
   );
@@ -25,9 +25,16 @@ export default function ClientsPage() {
   return (
     <div className="p-4">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-xl font-bold">Clients</h1>
-        <ClientFormDialog />
+     
+      <div className="flex  justify-between items-center mb-6">
+         <h1 className="text-xl font-bold">Clients</h1>
+         <div className="flex gap-3">
+          <ClientFormDialog />
+        <Button onClick={() => window.open("/api/clients/export", "_blank")}>
+       Export to csv
+      </Button>
+      </div>
+        
       </div>
 
       {/* Mobile: Cards */}

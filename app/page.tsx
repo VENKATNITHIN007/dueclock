@@ -1,3 +1,4 @@
+
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -9,6 +10,7 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-white px-4">
+    
       <div className="max-w-2xl w-full text-center space-y-6">
         <h1 className="text-4xl font-bold tracking-tight text-slate-900">
            <span className="text-orange-400">Due</span>clock — Never miss A Duedate
