@@ -26,16 +26,17 @@ export default function ClientsPage() {
     <div className="p-4">
       {/* Header */}
      
-      <div className="flex  justify-between items-center mb-6">
-         <h1 className="text-xl font-bold">Clients</h1>
-         <div className="flex gap-3">
-          <ClientFormDialog />
-        <Button onClick={() => window.open("/api/clients/export", "_blank")}>
-       Export to csv
-      </Button>
-      </div>
-        
-      </div>
+      {/* Header */}
+<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 px-4">
+  <h1 className="text-2xl font-bold text-slate-900">Clients</h1>
+
+  <div className="flex flex-wrap gap-3">
+    <ClientFormDialog />
+    <Button onClick={() => window.open("/api/clients/export", "_blank")}>
+      Export to CSV
+    </Button>
+  </div>
+</div>
 
       {/* Mobile: Cards */}
       {/* Mobile: Cards */}
