@@ -8,17 +8,18 @@ import RegisterSW from "@/components/Register";
 const MEASUREMENT_ID=process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
 
 export const metadata: Metadata = {
-  title: 'due clock',
-  description: 'A Progressive Web App built with Next.js',
+  title: 'DueClock – Smart CA Due Date Tracker',
+  description: 'One simple place to manage due dates and client follow-ups.',
   manifest: '/manifest.webmanifest',
-  icons: {
-    apple: '/icon-512x512.png',
+ icons: {
+    icon: '/favicon.ico',          // main favicon (for browsers)
+    shortcut: '/favicon.ico',      // windows / some browsers
+    apple: '/icon-192.png',        // apple-touch-icon
   },
   themeColor: '#000000',
 };
 
 export const viewport: Viewport = {
-  themeColor: '#3b82f6',
   width: 'device-width',
   initialScale: 1,
   maximumScale:1,
