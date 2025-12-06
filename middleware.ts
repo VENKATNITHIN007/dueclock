@@ -2,68 +2,62 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
-/**
- * Allowlist for static/public assets we do NOT want auth to intercept.
- * Keep this list minimal but include favicon, icons, manifest, robots, and next internals.
- */
+// Matches any file with an extension (example: .png, .jpg, .webp, .css, .js)
+// Means: all images/static files are allowed publicly
+const PUBLIC_FILE = /\.(.*)$/;
+
+// List of known static assets that should bypass auth
 const PUBLIC_ASSET_PREFIXES = [
-  "/_next/",            // next internals
+  "/_next/",
   "/favicon.ico",
-  "/icon-",             // icon-192.png, icon-512.png
   "/manifest.webmanifest",
   "/robots.txt",
-  "/apple-touch-icon",  // some platforms
-  "/android-chrome",    // android-chrome-192x192.png etc.
-  "/sitemap",           // sitemap.xml
+  "/apple-touch-icon",
+  "/android-chrome",
+  "/sitemap",
+  "/icon-",
 ];
 
+// Wrap middleware with NextAuth for automatic token checking
 export default withAuth(
   function middleware() {
-    // If you need any runtime logic after authorization, put it here.
-    return NextResponse.next();
+    return NextResponse.next(); // just continue the request
   },
   {
     callbacks: {
       authorized({ req, token }) {
         const { pathname } = req.nextUrl;
 
-        // Always allow next internals and public assets (fast bypass)
+        // 1) Allow any static file (like /hero.webp or /images/ss.jpg)
+        if (PUBLIC_FILE.test(pathname)) {
+          return true;
+        }
+
+        // 2) Allow all known public assets and Next.js internals
         if (PUBLIC_ASSET_PREFIXES.some(prefix => pathname.startsWith(prefix))) {
           return true;
         }
 
-        // Allow auth-related endpoints
+        // 3) Allow authentication API routes
         if (pathname.startsWith("/api/auth")) return true;
 
-        // Explicit public pages
-        const publicPages = [
-          "/",         // homepage
-          "/login",    // login page
-          "/contactus" // contact page
-        ];
-        if (publicPages.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
+        // 4) Public pages that do not need login
+        const publicPages = ["/", "/login", "/contactus"];
+        if (publicPages.some(p => pathname === p || pathname.startsWith(p + "/"))) {
           return true;
         }
 
-        // Otherwise require a token
+        // 5) All other routes require a valid login token
         return !!token;
       },
     },
   }
 );
 
-/**
- * Config matcher: run middleware for everything EXCEPT the excluded static paths.
- * Note: keep this negative-lookahead list in sync with PUBLIC_ASSET_PREFIXES above.
- */
+// Matcher tells which requests should run through middleware
 export const config = {
   matcher: [
-    /*
-     * Protect everything except:
-     *  - _next/static and _next/image
-     *  - favicon and icon-* and manifest and robots
-     *  - api/auth
-     */
+    // Run middleware on all routes EXCEPT next static, next image, favicon, manifest, robots, auth
     '/((?!_next/static|_next/image|favicon.ico|icon-|android-chrome|apple-touch-icon|manifest.webmanifest|robots.txt|api/auth).*)',
   ],
 };

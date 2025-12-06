@@ -33,7 +33,7 @@ export async function GET() {
 
     await connectionToDatabase()
 
-    // prepare date bounds
+
     const now = new Date()
     const todayStart = startOfDay(now)
     const urgentEnd = endOfDay(new Date(todayStart.getTime() + 2 * 24 * 60 * 60 * 1000)) // today +2 days
@@ -42,10 +42,10 @@ export async function GET() {
 
     const firmId = new mongoose.Types.ObjectId(session.user.firmId)
 
-    // total clients (fast count)
+
     const totalClientsPromise = Client.countDocuments({ firmId })
 
-    // DueDate facet: compute multiple counts in a single aggregation
+ 
     const facet = await DueDate.aggregate([
       { $match: { firmId } },
       {

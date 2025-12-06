@@ -61,7 +61,7 @@ export async function PATCH(
   }
 }
 
-// ✅ DELETE
+//  DELETE
 export async function DELETE(
   req: NextRequest,
    { params }: { params: Promise<{ id: string }> } 

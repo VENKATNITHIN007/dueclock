@@ -5,7 +5,7 @@ import DueDate from "@/models/DueDate"
 import { getServerSession } from "next-auth"
 import { NextResponse } from "next/server"
 
-// --- Small helper functions ---
+
 function startOfDay(d: Date) {
   const s = new Date(d)
   s.setHours(0, 0, 0, 0)
@@ -71,7 +71,6 @@ export async function GET(req: Request) {
 
     }
 
-    // --- Build Mongo match stage ---
     const match: any = {
       firmId: new mongoose.Types.ObjectId(session.user.firmId),
     }
@@ -79,7 +78,6 @@ export async function GET(req: Request) {
     if (status) match.status = status
     if (dateMatch) match.date = dateMatch
 
-    // --- Aggregation pipeline ---
     const pipeline: any[] = [
       { $match: match },
       {

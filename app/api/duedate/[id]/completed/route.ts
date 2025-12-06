@@ -39,7 +39,7 @@ export async function PATCH(
     mSession.startTransaction();
 
     try {
-      // lock & fetch the due
+      
       const due = await DueDate.findById(id).session(mSession);
       if (!due) {
         await mSession.abortTransaction();
@@ -47,7 +47,7 @@ export async function PATCH(
         return NextResponse.json({ error: "Due date not found" }, { status: 404 });
       }
 
-      // if already completed, just return ok (idempotent)
+      // if already completed, just return ok 
       if (due.status === "completed") {
         await mSession.commitTransaction();
         mSession.endSession();

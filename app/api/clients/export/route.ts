@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { connectionToDatabase } from "@/lib/db";
 import { authOptions } from "@/lib/auth";
 import DueDate from "@/models/DueDate";
-import { Parser } from "json2csv"; // Fixed import
+import { Parser } from "json2csv"; 
 
 export async function GET() {
   try {
@@ -39,7 +39,7 @@ export async function GET() {
       status: d.status
     }));
 
-    const parser = new Parser({ // Now using the correctly imported Parser
+    const parser = new Parser({ 
       fields: [
         "title",
         "date",
