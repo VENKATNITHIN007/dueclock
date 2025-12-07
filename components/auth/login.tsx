@@ -25,7 +25,7 @@ export default function SignInButton() {
         containerClassName="rounded-full"
         onClick={handle}
         as="button"
-        className="dark:bg-black bg-white text-black dark:text-white flex items-center space-x-2"
+        className="bg-white text-black flex items-center space-x-2"
       >
         <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
         <path

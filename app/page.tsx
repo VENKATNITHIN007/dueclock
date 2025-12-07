@@ -12,29 +12,47 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen bg-white text-slate-900">
-      {/* HEADER */}
-      <header className="w-full bg-slate-100 border-b border-slate-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center justify-between w-full sm:w-auto gap-2">
-            <span className="font-extrabold text-xl md:text-2xl tracking-tight bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-500 bg-clip-text text-transparent">
-              Dueclock
-            </span>
-          </div>
+<header className="sticky top-0 z-50 w-full bg-slate-800  border-b border-gray-200 shadow-sm">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="flex items-center justify-between h-14">
+      
+      {/* Bold Logo */}
+      <div className="text-xl font-bold leading-tight">
+        <span className="bg-gradient-to-r from-orange-500 to-blue-500 bg-clip-text text-transparent">
+                Dueclock
+              </span>
+      </div>
 
-          <nav className="flex flex-wrap items-center justify-center sm:justify-end gap-3 sm:gap-6 text-xs sm:text-sm text-slate-600">
-            <a href="#features" className="hover:text-slate-900">
-              Features
-            </a>
-            <a href="#how" className="hover:text-slate-900">
-              How it works
-            </a>
-            <a href="#hire-me" className="hover:text-slate-900">
-              Hire me
-            </a>
-            <SignInButton />
-          </nav>
+      {/* Desktop Menu */}
+      <nav className="flex items-center space-x-8">
+        <a 
+          href="#features" 
+          className="font-semibold text-white  hover:text-blue-200 transition-colors text-sm"
+        >
+          Features
+        </a>
+        <a 
+          href="#how" 
+          className="font-semibold text-white hover:text-blue-200 transition-colors text-sm"
+        >
+          How It Works
+        </a>
+        <a 
+          href="#hire-me" 
+          className="hidden sm:block font-semibold text-white hover:text-blue-200 transition-colors text-sm"
+        >
+          Hire Me
+        </a>
+        <div className="hidden sm:block ml-4 ">
+          <SignInButton />
         </div>
-      </header>
+      </nav>
+
+
+     
+    </div>
+  </div>
+</header>
 
       {/* HERO */}
       <section className="w-full bg-purple-200">
