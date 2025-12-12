@@ -41,10 +41,8 @@ Users must be logged in to access any data
 All forms are validated using Zod, ensuring:
 
 Correct client details
-
-Valid due date formats
-
-Safe API requests
+,Valid due date formats
+,Safe API requests
 
 
 ✨ Features
