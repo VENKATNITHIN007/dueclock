@@ -19,8 +19,8 @@ Next.js (App Router)
 ,NextAuth / Sessions
 ,Middleware for protected routes
 ,React Query (for server state + API fetching)
-.Zod (validation)
-.Fetch
+,Zod (validation)
+,Fetch
 ,cloud hosting on Vercel
 
 ---
