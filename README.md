@@ -44,12 +44,9 @@ Correct client details
 ,Valid due date formats
 ,Safe API requests
 
+---
 
 ✨ Features
-
-🔐 Secure Authentication (NextAuth — Sessions + JWT strategy)
-
-📅 Create, edit and delete due dates
 
 👥 Client management
 
@@ -57,30 +54,21 @@ Correct client details
 
 📊 Dashboard with all urgent,overdue,completed dates
 
-🔍 Search & filter due dates
-
 🔄 Automatic refetch using React Query
-
-💾 MongoDB database with Mongoose models
-
-📁 Middleware-protected routes
 
 📱 Fully responsive UI using Tailwind
 
-⚡ Fast performance and instant UI updates
 
 📂 Folder Structure
 
   /app
     /api
-    <!-- routes -->
       /auth 
       /clients
       /dashboard
       /duedate
       /user
-    /app 
-    <!-- pages -->
+    /app   
       /clients
       /dashboard
       /duedates
@@ -93,7 +81,6 @@ Correct client details
     /layout
     /ui
   /hooks
-  <!-- react query hooks for fetching , caching and invalidaiton  -->
     /client
     /dashboard
     /due
@@ -136,7 +123,7 @@ git clone https://github.com/yourusername/dueclock.git
 
 cd dueclock
 
-2. Install dependencies
+3. Install dependencies
 
 npm install
 
