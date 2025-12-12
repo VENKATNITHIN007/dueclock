@@ -13,22 +13,34 @@ https://dueclock.in
 Tech Stacks used:
 
 Next.js (App Router)
+
 React
+
 TailwindCSS
+
 MongoDB
+
 NextAuth / Sessions
+
 Middleware for protected routes
+
 React Query (for server state + API fetching)
+
 Zod (validation)
+
 Axios / Fetch
+
 cloud hosting on Vercel
 
 ---
 🔒 Authentication Flow (Simple Explanation)
 
 Uses session-based auth via NextAuth
+
 JWT used inside the session for API validation
+
 Middleware protects all dashboard routes
+
 Users must be logged in to access any data
 
 ---
@@ -36,23 +48,36 @@ Users must be logged in to access any data
 🧪 Validation
 
 All forms are validated using Zod, ensuring:
+
 Correct client details
+
 Valid due date formats
+
 Safe API requests
 
 
 ✨ Features
 
 🔐 Secure Authentication (NextAuth — Sessions + JWT strategy)
+
 📅 Create, edit and delete due dates
+
 👥 Client management
+
 📝 Track compliance deadlines,automatic creating of next duedates
+
 📊 Dashboard with all urgent,overdue,completed dates
+
 🔍 Search & filter due dates
+
 🔄 Automatic refetch using React Query
+
 💾 MongoDB database with Mongoose models
+
 📁 Middleware-protected routes
+
 📱 Fully responsive UI using Tailwind
+
 ⚡ Fast performance and instant UI updates
 
 
@@ -145,8 +170,9 @@ http://localhost:3000
 📖 Usage Guide
 
 1. Register / Login with google
-2. Add a clients 
-3. Create Due Dates for each client
+  
+3. Add a clients
+4. Create Due Dates for each client
 5. View all deadlines on dashboard
 6. Edit / delete due dates anytime
 7. Search or filter upcoming deadlines
