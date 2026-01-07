@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { connectionToDatabase } from "@/lib/db";
 import { authOptions } from "@/lib/auth";
-import Client from "@/models/Client";
+import Client, { IClient } from "@/models/Client";
 import { Parser } from "json2csv";
 import { canAddOrDelete, getUserRole } from "@/lib/permissions";
 import { createAudit, AuditActions } from "@/lib/audit";
@@ -24,7 +24,7 @@ export async function GET() {
     // Fetch clients for the current firm
     const clients = await Client.find({ firmId: session.user.firmId })
       .select("name phoneNumber email type")
-      .lean();
+      .lean() as IClient[];
 
     if (!clients || !clients.length) {
       return NextResponse.json({ error: "No clients found" }, { status: 404 });
