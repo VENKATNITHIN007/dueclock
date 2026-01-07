@@ -3,14 +3,16 @@
 
 import React from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Home, Users, CalendarDays } from "lucide-react";
+import { Users, CalendarDays, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 
 const LINKS = [
-  { href: "/app/dashboard", label: "Dashboard", Icon: Home },
-  { href: "/app/clients", label: "Clients", Icon: Users },
+  // { href: "/app/dashboard", label: "Dashboard", Icon: Home },
   { href: "/app/duedates", label: "Due Dates", Icon: CalendarDays },
+  { href: "/app/clients", label: "Clients", Icon: Users },
+  { href: "/app/subscription", label: "Subscription", Icon: CreditCard },
+  
 ];
 
 export default function Sidebar() {

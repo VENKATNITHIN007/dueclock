@@ -4,7 +4,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Users, CalendarDays,User
+import {  Users, CalendarDays,User
  } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -14,10 +14,10 @@ export default function BottomBar() {
   const pathname = usePathname() ?? "";
 
   const LINKS = [
-    { href: "/app/dashboard", label: "Dashboard", Icon: Home },
-    { href: "/app/clients", label: "Clients", Icon: Users },
+    // { href: "/app/dashboard", label: "Dashboard", Icon: Home },
     { href: "/app/duedates", label: "Due Dates", Icon: CalendarDays },
-     { href: "/app/user", label: "profile", Icon: User }
+    { href: "/app/clients", label: "Clients", Icon: Users },
+    { href: "/app/firm", label: "profile", Icon: User }
 
   ];
 

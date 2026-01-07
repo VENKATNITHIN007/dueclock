@@ -5,8 +5,8 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useFetchClientById } from "@/hooks/client/useFetchClientById";
-import { useDeleteClient } from "@/hooks/client/useDeleteClient";
+import { useFetchClientById } from "@/hooks/clients/useFetchClientById";
+import { useDeleteClient } from "@/hooks/clients/useDeleteClient";
 import { ClientFormDialog } from "@/components/dialogs/ClientFormDialog";
 
 import { Phone, Mail as MailIcon, Copy, MessageCircle } from "lucide-react";
@@ -21,7 +21,7 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
-import { DueDateFormDialog } from "@/components/dialogs/DueDateFormDialog";
+
 
 function sanitizePhoneForWa(raw?: string) {
   if (!raw) return null;
@@ -66,7 +66,7 @@ export default function ClientDetailPage() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-8">
-      <DueDateFormDialog clientId={clientId} />
+     
 
       {/* Client Info Card */}
       <Card className="border rounded-xl shadow-md">
@@ -224,7 +224,7 @@ export default function ClientDetailPage() {
 
         {(() => {
           const pendingDueDates = client.dueDates.filter(
-            (due) => due.status === "pending"
+            (due:any) => due.workStatus === "pending"
           );
 
           if (pendingDueDates.length === 0) {
@@ -235,15 +235,15 @@ export default function ClientDetailPage() {
 
           return (
             <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-              {pendingDueDates.map((due) => (
-                <Card key={due._id} className="p-3 shadow-sm bg-white border">
+              {pendingDueDates.map((due:any) => (
+                <Card key={due.dueDate._id} className="p-3 shadow-sm bg-white border">
                   <div className="flex items-start gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="font-medium text-sm text-red-900 truncate">
-                        {due.title}
+                        {due.dueDate.title}
                       </div>
                       <div className="text-xs text-muted-foreground mt-1">
-                        {formatFriendly(due.date)}
+                        {formatFriendly(due.dueDate.date)}
                       </div>
                     </div>
                   </div>

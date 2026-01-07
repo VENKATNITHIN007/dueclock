@@ -2,72 +2,67 @@ import { authOptions } from "@/lib/auth";
 import { connectionToDatabase } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import User from "@/models/User"; // make sure you import this
-import { zodToFieldErrors } from "@/lib/zodError";
-import { userProfileFormSchema,userProfileFormInput} from "@/schemas/formSchemas";
+import User from "@/models/User";
+import { createAudit, AuditActions } from "@/lib/audit";
 
-// ✅ GET user
-export async function GET() {
-  try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    await connectionToDatabase();
-    const user = await User.findById(session.user.id)
-    .select("-__v -createdAt -updatedAt")
-    .lean()
-
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    return NextResponse.json(user, { status: 200 });
-  } catch {
-    return NextResponse.json({ error: "Failed to fetch user" }, { status: 500 });
-  }
-}
-
-// ✅ PATCH user
 export async function PATCH(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await req.json();
-    const parsed = userProfileFormSchema.safeParse(body);
+    const update: Record<string, any> = {};
+    const changes: Record<string, any> = {};
 
-    if (!parsed.success) {
-      return NextResponse.json(zodToFieldErrors(parsed.error),
+    await connectionToDatabase();
+
+    // Get original user for audit
+    const originalUser = await User.findById(session.user.id).lean();
+    if (!originalUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    // Only allow name update for all users
+    if (body.name && body.name.trim() !== originalUser.name) {
+      update.name = body.name.trim();
+      changes.name = { from: originalUser.name, to: update.name };
+    }
+
+    if (Object.keys(update).length === 0) {
+      return NextResponse.json(
+        { error: "No valid fields to update" },
         { status: 400 }
       );
     }
 
-    const updateFields: Partial<userProfileFormInput> = {};
-    if (parsed.data.name !== undefined) updateFields.name = parsed.data.name;
-    if (parsed.data.phoneNumber !== undefined) updateFields.phoneNumber = parsed.data.phoneNumber;
-
-    await connectionToDatabase();
-
     const updatedUser = await User.findByIdAndUpdate(
       session.user.id,
-      { $set: updateFields }, // ✅ spread, not nested
+      { $set: update },
       { new: true }
-    )  .select("-__v -createdAt -updatedAt")
-    .lean()
+    ).select("name email role").lean();
 
     if (!updatedUser) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    // Create audit log
+    await createAudit({
+      firmId: originalUser.firmId!,
+      userId: session.user.id,
+      action: AuditActions.USER_UPDATED(originalUser.name || "User", changes),
+      actionType: "edited",
+      details: { previous: originalUser, updated: update },
+    });
+
     return NextResponse.json(updatedUser, { status: 200 });
-  } catch {
-    return NextResponse.json({ error: "Failed to update user" }, { status: 500 });
+  } catch (err) {
+    console.error("PATCH user error:", err);
+    return NextResponse.json(
+      { error: "Failed to update user" },
+      { status: 500 }
+    );
   }
 }
+

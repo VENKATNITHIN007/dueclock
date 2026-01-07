@@ -1,7 +1,44 @@
 📌 DueClock – CA Due Date Tracking App(Pwa)
 
-DueClock is a lightweight due-date tracking system for CA firms.
-It helps organize clients, firms, and compliance deadlines in one simple dashboard.
+Problem:
+CAs repeatedly handle the same monthly due dates and struggle to track all clients and communicate deadlines using WhatsApp/Excel. No mobile-friendly compliance tool exists.
+
+so I Built a clean, mobile-first PWA that automates recurring due dates, manages clients, tracks compliance status, and communication easy all in one simple dashboard.
+
+🔗 Live Demo
+
+https://dueclock.in
+
+
+Tech Stacks used:
+
+Next.js (App Router)
+
+React
+
+TailwindCSS
+
+MongoDB
+
+NextAuth / Sessions
+
+Middleware for protected routes
+
+React Query (for server state + API fetching)
+
+Zod (validation)
+
+Axios / Fetch
+
+cloud hosting on Vercel
+
+---
+🔒 Authentication Flow (Simple Explanation)
+
+Uses session-based auth via NextAuth
+JWT used inside the session for API validation
+Middleware protects all dashboard routes
+Users must be logged in to access any data
 
 ---
 

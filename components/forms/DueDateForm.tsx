@@ -15,19 +15,17 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
 import { dueFormSchema, dueFormInput } from "@/schemas/formSchemas";
-import { useCreateDueDate } from "@/hooks/due/useCreateDueDate";
-import { useUpdateDueDate } from "@/hooks/due/useUpdateDueDate";
+import { useCreateDueDate } from "@/hooks/dues/useCreateDueDate";
+import { useUpdateDueDate } from "@/hooks/dues/useUpdateDueDate";
 //for slecting import { useFetchClients } from "@/hooks/client/useFetchClients"
 import { useValidationErrorHandler } from "@/hooks/useValidationEHandle";
 
 export default function DueDateForm({
   id,
-  clientId,
   initialData,
   onSuccess,
 }: {
   id?: string;
-  clientId: string;
   initialData?: Partial<dueFormInput>;
   onSuccess?: () => void;
 }) {
@@ -35,9 +33,7 @@ export default function DueDateForm({
     resolver: zodResolver(dueFormSchema),
     defaultValues: {
       title: initialData?.title ?? "",
-      date: initialData?.date ?? "",
-      label: initialData?.label ?? "other",
-      recurrence: initialData?.recurrence ?? "none",
+      date: initialData?.date ?? "", 
     },
     mode: "onChange",
   });
@@ -66,13 +62,10 @@ export default function DueDateForm({
         }
       );
 
-      if (!clientId) {
-        toast.error("Client ID missing");
-        return;
-      }
+     
     } else {
       createMutation.mutate(
-        { clientId, data },
+        { data },
         {
           onSuccess: () => {
             toast("Due created ✅");
@@ -116,50 +109,6 @@ export default function DueDateForm({
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="label"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>label*</FormLabel>
-              <FormControl>
-                <select
-                  {...field}
-                  className="w-full rounded-md border px-3 py-2"
-                >
-                  <option value="gst">gst</option>
-                  <option value="tds">tds</option>
-                  <option value="pf">pf</option>
-                  <option value="esi">esi</option>
-                  <option value="other">other</option>
-                </select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="recurrence"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>recurrence*</FormLabel>
-              <FormControl>
-                <select
-                  {...field}
-                  className="w-full rounded-md border px-3 py-2"
-                >
-                  <option value="none">none</option>
-                  <option value="monthly">monthly</option>
-                  <option value="quarterly">quarterly</option>
-                  <option value="yearly">yearly</option>
-                </select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         <Button
           type="submit"
           disabled={updateMutation.isPending || createMutation.isPending}

@@ -28,7 +28,7 @@ export default function UserUpdateForm({
 }) {
   const form = useForm<userProfileFormInput>({
     resolver: zodResolver(userProfileFormSchema),
-    defaultValues: initialData ?? { name: "", phoneNumber: "+91" },
+    defaultValues: initialData ?? { name: "" },
   });
 
   const mutation = useUpdateUser();
@@ -36,7 +36,7 @@ export default function UserUpdateForm({
 
   const onSubmit = (values: userProfileFormInput) => {
     mutation.mutate(
-      { data: values },
+      { data: { name: values.name } },
       {
         onSuccess: () => {
           toast("Profile updated ✅");
@@ -60,19 +60,6 @@ export default function UserUpdateForm({
               <FormLabel>Name</FormLabel>
               <FormControl>
                 <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          name="phoneNumber"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Phone</FormLabel>
-              <FormControl>
-                <Input {...field} value={field.value ?? ""} />
               </FormControl>
               <FormMessage />
             </FormItem>

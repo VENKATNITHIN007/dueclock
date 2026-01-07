@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { DueType } from "./dueDateSchema";
+import { DueType } from "./dueClientSchema";
 
 const phoneOptional = z
   .string()

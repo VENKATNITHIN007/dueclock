@@ -1,3 +1,5 @@
+import { ActivityFilter } from "@/schemas/apiSchemas/activitySchema";
+
 export const queryKeys = {
   clients: {
     all: ["clients"] as const,
@@ -10,7 +12,13 @@ export const queryKeys = {
   user: {
     profile: ["user"] as const,
   },
-  dashboard:{
-    counts:["counts"] as const
-  }
-}
+  dueclient: {
+    all: ["dueclient"] as const,
+    detail: (id: string) => ["dueclient", id] as const,
+  },
+  firm: {
+    activity: (filter: ActivityFilter | null) => ["activity", filter] as const,
+    details: ["details"] as const,
+    members: ["members"] as const,
+  },
+};

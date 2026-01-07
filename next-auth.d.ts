@@ -5,11 +5,14 @@ declare module "next-auth" {
     user: {
       id: string;
       firmId?: string;
+      role?: "owner" | "admin" | "staff";
     } & DefaultSession["user"];
   }
 
   interface JWT extends DefaultJWT {
     id: string;
     firmId?: string;
+    role?: "owner" | "admin" | "staff";
+
   }
 }

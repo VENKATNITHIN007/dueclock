@@ -37,9 +37,6 @@ export const dueFormSchema = z.object({
       message: "Date can't be less than today",
     }
   ),
-  label: z.string(),
-  recurrence: z.enum(["none", "monthly", "quarterly", "yearly"]),
-  clientId: z.string("client required").optional(),
 });
 export type dueFormInput = z.infer<typeof dueFormSchema>;
 
@@ -48,8 +45,6 @@ export const dueFormSchemaBackend = z.object({
   date: z.coerce
     .date()
     .refine((d) => d > new Date(), "Date must be greater than today"),
-  recurrence: z.enum(["none", "monthly", "quarterly", "yearly"]),
-  label: z.string(),
 });
 
 export type DueFormInputBackend = z.infer<typeof dueFormSchemaBackend>;

@@ -13,7 +13,7 @@ export default function SignInButton() {
     if (loading) return;
     setLoading(true);
     try {
-      await signIn("google", { callbackUrl: "/app/dashboard" });
+      await signIn("google", { callbackUrl: "/app/onboarding" });
     } finally {
       setLoading(false);
     }

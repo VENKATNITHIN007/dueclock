@@ -15,7 +15,7 @@ export default function Topbar({
   sidebarVisible = true,
 }: TopbarProps) {
   const router = useRouter();
-  const goProfile = () => router.push("/app/user");
+  const goProfile = () => router.push("/app/firm");
 
   return (
     <header className="hidden md:flex items-center justify-between px-4 py-3 border-b bg-white">

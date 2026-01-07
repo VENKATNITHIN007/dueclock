@@ -1,12 +1,44 @@
 "use client";
-import { useFetchClients } from "@/hooks/client/useFetchClients";
+import { useFetchClients } from "@/hooks/clients/useFetchClients";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ClientFormDialog } from "@/components/dialogs/ClientFormDialog";
+import ImportClientsDialog from "@/components/dialogs/ImportClientsDialog";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { canAddOrDelete } from "@/lib/permissions";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ClientsPage() {
+  const { data: session } = useSession();
   const { data: clients, isLoading, isError } = useFetchClients();
+  const canAdd = canAddOrDelete(session?.user?.role);
+  const queryClient = useQueryClient();
+
+  const handleExportClients = async () => {
+    try {
+      const response = await fetch("/api/clients/export", {
+        credentials: "include",
+      });
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `clients-${new Date().toISOString().split("T")[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        // Invalidate activity queries to show export in firm activity
+        queryClient.invalidateQueries({ 
+          predicate: (query) => query.queryKey[0] === "activity" 
+        });
+      }
+    } catch (err) {
+      console.error("Failed to export clients:", err);
+    }
+  };
   if (isLoading) return <p className="p-4">Loading...</p>;
   if (isError)
     return <p className="p-4 text-red-600">Failed to load clients</p>;
@@ -15,7 +47,7 @@ export default function ClientsPage() {
       <div className="p-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-xl font-bold">Clients</h1>
-          <ClientFormDialog />
+          {canAdd && <ClientFormDialog />}
         </div>
         <p>No clients yet</p>
       </div>
@@ -30,12 +62,15 @@ export default function ClientsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 px-4">
         <h1 className="text-2xl font-bold text-slate-900">Clients</h1>
 
-        <div className="flex flex-wrap gap-3">
-          <ClientFormDialog />
-          <Button onClick={() => window.open("/api/clients/export", "_blank")}>
-            Export to CSV
-          </Button>
-        </div>
+        {canAdd && (
+          <div className="flex flex-wrap gap-3">
+            <ClientFormDialog />
+            <ImportClientsDialog />
+            <Button onClick={handleExportClients}>
+              Export to CSV
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Mobile: Cards */}
@@ -60,7 +95,7 @@ export default function ClientsPage() {
                   </Button>
                 </Link>
 
-                <ClientFormDialog client={c} />
+                {canAdd && <ClientFormDialog client={c} />}
               </div>
             </CardContent>
           </Card>
@@ -95,7 +130,7 @@ export default function ClientsPage() {
                       </Button>
                     </Link>
 
-                    <ClientFormDialog client={c} />
+                    {canAdd && <ClientFormDialog client={c} />}
                   </td>
                 </tr>
               ))}

@@ -2,13 +2,14 @@ import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { connectionToDatabase } from "./db";
 import User from "@/models/User";
-import Firm from "@/models/Firm";
+
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-  console.warn("Warning: GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET is not set.");
+  console.warn("⚠️ GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET is missing");
 }
+
 if (!process.env.NEXTAUTH_SECRET) {
-  console.warn("Warning: NEXTAUTH_SECRET is not set.");
+  console.warn("⚠️ NEXTAUTH_SECRET is missing");
 }
 
 export const authOptions: NextAuthOptions = {
@@ -20,48 +21,62 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    // token in cokkies and firmId to jwt , to authorize
-    async jwt({ token, user }) {
-      if (user?.email) {
-        try {
-          await connectionToDatabase();
+   
+    async signIn({ user }) {
+      try {
+        await connectionToDatabase();
 
-          let dbUser = await User.findOne({ email: user.email });
+        if (!user.email) return false;
 
-          if (!dbUser) {
-            const newFirm = await Firm.create({
-              firmName: `${user.name || "Default"}_firm`,
-              owner: user.id,
-            });
+        const dbUser = await User.findOne({ email: user.email });
 
-            dbUser = await User.create({
-              name: user.name,
-              email: user.email,
-              image: user.image,
-              googleId: user.id,
-              firmId: newFirm._id,
-            });
-          }
-          token.id = dbUser?._id.toString();
-          if (dbUser?.firmId) {
-            token.firmId = dbUser.firmId.toString();
-          }
-        } catch (error) {
-          console.error("NextAuth jwt callback DB error:", error);
+        if (!dbUser) {
+          // Always create user WITHOUT firm - everyone goes through onboarding
+          await User.create({
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            googleId: user.id,
+            // No firmId - user must choose to create or join firm
+            role: "staff", // Default role until they create/join firm
+          });
         }
-      }
 
-      return token;
+        return true;
+      } catch (error) {
+        console.error("❌ SignIn error:", error);
+        return false;
+      }
     },
 
-    // for frontend useSession()
+    async jwt({ token }) {
+      try {
+        if (!token.email) return token;
+
+        await connectionToDatabase();
+
+        // Always fetch latest user data to get updated firm/role after invite acceptance
+        const dbUser = await User.findOne({ email: token.email });
+
+        if (dbUser) {
+          token.id = dbUser._id.toString();
+          token.firmId = dbUser.firmId?.toString() || null;
+          token.role = dbUser.role;
+        }
+
+        return token;
+      } catch (error) {
+        console.error(" JWT callback error:", error);
+        return token;
+      }
+    },
+
+   
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-
-        if (token.firmId) {
-          session.user.firmId = token.firmId as string;
-        }
+        session.user.firmId = token.firmId as string;
+        session.user.role = token.role as "owner" | "admin" | "staff";
       }
 
       return session;

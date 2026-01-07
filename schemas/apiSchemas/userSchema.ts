@@ -15,8 +15,6 @@ export const userSchemaApi = z
     googleId: z.string().optional(),
     firmId: z.string().optional(),
     role: z.enum(["solo", "ca", "owner"]),
-    referralCode: z.string().optional(),
-    referredBy: z.string().optional(),
   })
   .catchall(z.unknown());
 export type UserType = z.infer<typeof userSchemaApi>;

@@ -7,8 +7,7 @@ export interface IUser {
   phoneNumber?: string;
   image?: string;
   googleId?: string;
-  role?: "owner" | "staff";
-  default: "owner";
+  role?: "owner"| "admin"| "staff";
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -21,7 +20,7 @@ const userSchema = new Schema<IUser>(
     googleId: String,
     phoneNumber: String,
     firmId: { type: Schema.Types.ObjectId, ref: "Firm" },
-    role: { type: String, enum: ["staff", "owner"], default: "owner" },
+    role: { type: String, enum: ["owner", "admin","staff"], default: "owner" },
   },
   {
     timestamps: true,
