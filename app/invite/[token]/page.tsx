@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 
-export default function InviteAcceptPage({ params }: { params: Promise<{ token: string }> | { token: string } }) {
+export default function InviteAcceptPage({ params }: { params: Promise<{ token: string }> }) {
   const router = useRouter();
   const { data: session, status: sessionStatus, update } = useSession();
   const [status, setStatus] = useState<"idle" | "loading" | "checking_auth" | "success" | "error">("idle");
@@ -15,7 +15,7 @@ export default function InviteAcceptPage({ params }: { params: Promise<{ token: 
   useEffect(() => {
     // Handle async params
     async function getToken() {
-      const resolvedParams = "then" in params ? await params : params;
+      const resolvedParams = await params;
       setToken(resolvedParams.token);
     }
     getToken();

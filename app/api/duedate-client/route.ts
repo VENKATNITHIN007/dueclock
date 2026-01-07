@@ -5,8 +5,8 @@ import { NextRequest, NextResponse } from "next/server";
 import DueDateClient from "@/models/DueDateClient";
 import { canAddOrDelete, getUserRole } from "@/lib/permissions";
 import { createAudit, AuditActions } from "@/lib/audit";
-import DueDate from "@/models/DueDate";
-import Client from "@/models/Client";
+import DueDate, { IDueDate } from "@/models/DueDate";
+import Client, { IClient } from "@/models/Client";
 
 export async function POST(req: NextRequest) {
   try {
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     await connectionToDatabase();
 
     // Get due date info for audit
-    const dueDate = await DueDate.findById(dueDateId).lean();
+    const dueDate = await DueDate.findById(dueDateId).lean() as IDueDate | null;
 
     // find already attached clients for this firm + dueDate
     const existing = await DueDateClient.find({
@@ -69,8 +69,8 @@ export async function POST(req: NextRequest) {
       });
 
     // Create audit logs for each attached client
-    const clients = await Client.find({ _id: { $in: toInsert } }).lean();
-    const clientMap = new Map(clients.map((c: any) => [String(c._id), c.name]));
+    const clients = await Client.find({ _id: { $in: toInsert } }).lean() as IClient[];
+    const clientMap = new Map(clients.map((c) => [String(c._id), c.name]));
     
     for (const record of insertedRecords) {
       const clientName = clientMap.get(String(record.clientId)) || "Unknown Client";

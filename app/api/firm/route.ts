@@ -2,8 +2,8 @@ import { authOptions } from "@/lib/auth";
 import { connectionToDatabase } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import Firm from "@/models/Firm";
-import User from "@/models/User";
+import Firm, { IFirm } from "@/models/Firm";
+import User, { IUser } from "@/models/User";
 import { canEditFirm, getUserRole } from "@/lib/permissions";
 import { createAudit, AuditActions } from "@/lib/audit";
 
@@ -19,7 +19,7 @@ export async function GET() {
     // 1️⃣ Fetch firm
     const firm = await Firm.findById(session.user.firmId)
       .select("-__v -createdAt -updatedAt")
-      .lean();
+      .lean() as IFirm | null;
 
     if (!firm) {
       return NextResponse.json({ error: "Firm not found" }, { status: 404 });
@@ -31,7 +31,7 @@ export async function GET() {
       firmId: session.user.firmId,
     })
       .select("name email phone role")
-      .lean();
+      .lean() as IUser | null;
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });

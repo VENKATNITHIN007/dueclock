@@ -2,12 +2,15 @@ import { authOptions } from "@/lib/auth";
 import { connectionToDatabase } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import User from "@/models/User";
+import User, { IUser } from "@/models/User";
 import { canManageMembers, getUserRole } from "@/lib/permissions";
 import { createAudit, AuditActions } from "@/lib/audit";
 
-export async function DELETE(_req: Request, context: any) {
-  const { params } = context;
+export async function DELETE(
+  _req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
   try {
     const session = await getServerSession(authOptions);
 
@@ -24,9 +27,9 @@ export async function DELETE(_req: Request, context: any) {
 
     // Get member info before removal for audit
     const member = await User.findOne({
-      _id: params.id,
+      _id: id,
       firmId: session.user.firmId,
-    }).lean();
+    }).lean() as IUser | null;
 
     if (!member) {
       return NextResponse.json({ error: "Member not found" }, { status: 404 });
@@ -34,7 +37,7 @@ export async function DELETE(_req: Request, context: any) {
 
     await User.findOneAndUpdate(
       {
-        _id: params.id,
+        _id: id,
         firmId: session.user.firmId,
       },
       {

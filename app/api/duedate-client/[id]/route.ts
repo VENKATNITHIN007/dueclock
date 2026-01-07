@@ -6,8 +6,8 @@ import DueDateClient from "@/models/DueDateClient";
 // Audit import not needed here; using createAudit helper
 import { canEditStatus, canAddOrDelete, getUserRole } from "@/lib/permissions";
 import { createAudit, AuditActions } from "@/lib/audit";
-import DueDate from "@/models/DueDate";
-import Client from "@/models/Client";
+import DueDate, { IDueDate } from "@/models/DueDate";
+import Client, { IClient } from "@/models/Client";
 
 export async function DELETE(
   _req: Request,
@@ -47,12 +47,12 @@ export async function DELETE(
 
     // Get client and due date info for audit
     const [client, dueDate] = await Promise.all([
-      Client.findById(recordClientId).lean(),
-      DueDate.findById(recordDueDateId).lean(),
+      Client.findById(recordClientId).lean() as Promise<IClient | null>,
+      DueDate.findById(recordDueDateId).lean() as Promise<IDueDate | null>,
     ]);
 
-    const clientName = (client as any)?.name || "Unknown Client";
-    const dueDateTitle = (dueDate as any)?.title || "Unknown Due Date";
+    const clientName = client?.name || "Unknown Client";
+    const dueDateTitle = dueDate?.title || "Unknown Due Date";
 
     // Delete the record
     await DueDateClient.deleteOne({ _id: id, firmId: session.user.firmId });
@@ -104,8 +104,8 @@ export async function PATCH(
 
     // Get client and due date info for audit
     const [client, dueDate] = await Promise.all([
-      Client.findById(record.clientId).lean(),
-      DueDate.findById(record.dueDateId).lean(),
+      Client.findById(record.clientId).lean() as Promise<IClient | null>,
+      DueDate.findById(record.dueDateId).lean() as Promise<IDueDate | null>,
     ]);
 
     let body: any = {};
@@ -141,8 +141,8 @@ export async function PATCH(
 
       // Create audit log with plain English action
       if (Object.keys(changes).length > 0) {
-        const clientName = (client as any)?.name || "Unknown Client";
-        const dueDateTitle = (dueDate as any)?.title || "Unknown Due Date";
+        const clientName = client?.name || "Unknown Client";
+        const dueDateTitle = dueDate?.title || "Unknown Due Date";
         await createAudit({
           firmId: session.user.firmId,
           userId: session.user.id,
@@ -163,8 +163,8 @@ export async function PATCH(
     (record as any).updatedBy = session.user.id;
     await record.save();
       
-      const clientName = (client as any)?.name || "Unknown Client";
-      const dueDateTitle = (dueDate as any)?.title || "Unknown Due Date";
+      const clientName = client?.name || "Unknown Client";
+      const dueDateTitle = dueDate?.title || "Unknown Due Date";
       await createAudit({
         firmId: session.user.firmId,
         userId: session.user.id,

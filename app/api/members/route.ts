@@ -2,7 +2,7 @@ import { authOptions } from "@/lib/auth";
 import { connectionToDatabase } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import User from "@/models/User";
+import User, { IUser } from "@/models/User";
 
 export async function GET() {
   try {
@@ -16,7 +16,7 @@ export async function GET() {
     const members = await User.find(
       { firmId: session.user.firmId },
       { name: 1, email: 1, role: 1 }
-    ).lean();
+    ).lean() as IUser[];
 
     const formattedMembers = members.map((member) => ({
       _id: member._id.toString(),

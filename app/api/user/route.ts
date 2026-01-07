@@ -2,7 +2,7 @@ import { authOptions } from "@/lib/auth";
 import { connectionToDatabase } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import User from "@/models/User";
+import User, { IUser } from "@/models/User";
 import { createAudit, AuditActions } from "@/lib/audit";
 
 export async function PATCH(req: NextRequest) {
@@ -19,7 +19,7 @@ export async function PATCH(req: NextRequest) {
     await connectionToDatabase();
 
     // Get original user for audit
-    const originalUser = await User.findById(session.user.id).lean();
+    const originalUser = await User.findById(session.user.id).lean() as IUser | null;
     if (!originalUser) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
