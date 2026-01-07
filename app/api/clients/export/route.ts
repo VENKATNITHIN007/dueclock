@@ -24,7 +24,7 @@ export async function GET() {
     // Fetch clients for the current firm
     const clients = await Client.find({ firmId: session.user.firmId })
       .select("name phoneNumber email type")
-      .lean() as IClient[];
+      .lean() as unknown as IClient[];
 
     if (!clients || !clients.length) {
       return NextResponse.json({ error: "No clients found" }, { status: 404 });

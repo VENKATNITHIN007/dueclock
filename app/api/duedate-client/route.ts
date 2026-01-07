@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
       });
 
     // Create audit logs for each attached client
-    const clients = await Client.find({ _id: { $in: toInsert } }).lean() as IClient[];
+    const clients = await Client.find({ _id: { $in: toInsert } }).lean() as unknown as IClient[];
     const clientMap = new Map(clients.map((c) => [String(c._id), c.name]));
     
     for (const record of insertedRecords) {

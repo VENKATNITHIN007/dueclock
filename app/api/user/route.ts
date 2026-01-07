@@ -41,7 +41,7 @@ export async function PATCH(req: NextRequest) {
       session.user.id,
       { $set: update },
       { new: true }
-    ).select("name email role").lean();
+    ).select("name email role").lean() as IUser | null;
 
     if (!updatedUser) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });

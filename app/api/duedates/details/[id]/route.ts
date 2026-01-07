@@ -41,7 +41,7 @@ export async function GET(
     // Transform the response to match the expected DueType
     const transformedDueDate = {
       ...(dueDate as any),
-      _id: (dueDate as any)._id.toString(),
+      _id: (dueDate as any)._id?.toString() || "",
       firmId: (dueDate as any).firmId?.toString(),
       userId: (dueDate as any).userId?.toString(),
       date: (dueDate as any).date.toISOString().split('T')[0], // Format as YYYY-MM-DD

@@ -2,7 +2,7 @@ import { authOptions } from "@/lib/auth";
 import { connectionToDatabase } from "@/lib/db";
 import { clientFormSchema,clientFormInput } from "@/schemas/formSchemas";
 import { zodToFieldErrors } from "@/lib/zodError";
-import Client from "@/models/Client";
+import Client, { IClient } from "@/models/Client";
 
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
@@ -33,7 +33,7 @@ export async function GET(
       firmId: session.user.firmId,
     })
       .select("-__v -createdAt -updatedAt")
-      .lean();
+      .lean() as IClient | null;
 
     if (!client) {
       return NextResponse.json({ error: "Client not found" }, { status: 404 });
@@ -129,7 +129,7 @@ export async function PATCH(req: NextRequest,    { params }: { params: Promise<{
     const originalClient = await Client.findOne({
       _id: id,
       firmId: session.user.firmId,
-    }).lean();
+    }).lean() as IClient | null;
 
     if (!originalClient) {
       return NextResponse.json({ error: "Client not found" }, { status: 404 });
@@ -140,14 +140,14 @@ export async function PATCH(req: NextRequest,    { params }: { params: Promise<{
       { $set: updateFields },
       { new: true }
     ).select("-__v -createdAt -updatedAt")
-    .lean();;
+    .lean() as IClient | null;
 
     if (!updatedClient) {
       return NextResponse.json({ error: "Client not found" }, { status: 404 });
     }
 
     // Create audit log
-    const clientName = updatedClient?.name || originalClient?.name || "Unknown Client";
+    const clientName = updatedClient.name || originalClient.name || "Unknown Client";
     await createAudit({
       firmId: session.user.firmId,
       userId: session.user.id,

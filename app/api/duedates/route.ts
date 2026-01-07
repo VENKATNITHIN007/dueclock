@@ -57,7 +57,7 @@ export async function GET() {
     ]);
 
     const formattedDueDates = dueDates.map((due) => ({
-      _id: due._id.toString(),
+      _id: due._id?.toString() || "",
       title: due.title,
       date: new Date(due.date).toISOString(),
       pendingCount: due.pendingCount,

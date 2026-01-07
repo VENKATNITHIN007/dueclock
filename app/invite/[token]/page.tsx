@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export default function InviteAcceptPage({ params }: { params: Promise<{ token: string }> }) {
   const router = useRouter();
-  const { data: session, status: sessionStatus, update } = useSession();
+  const { status: sessionStatus, update } = useSession();
   const [status, setStatus] = useState<"idle" | "loading" | "checking_auth" | "success" | "error">("idle");
   const [message, setMessage] = useState<string | null>(null);
   const [token, setToken] = useState<string>("");

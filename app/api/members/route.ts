@@ -16,10 +16,10 @@ export async function GET() {
     const members = await User.find(
       { firmId: session.user.firmId },
       { name: 1, email: 1, role: 1 }
-    ).lean() as IUser[];
+    ).lean() as unknown as IUser[];
 
     const formattedMembers = members.map((member) => ({
-      _id: member._id.toString(),
+      _id: member._id?.toString() || "",
       name: member.name || "",
       email: member.email,
       role: member.role as "owner" | "admin" | "staff",

@@ -30,7 +30,8 @@ export function canManageMembers(role: UserRole | undefined): boolean {
  * Check if user can edit status and communication (due date clients)
  * All roles can do this
  */
-export function canEditStatus(role: UserRole | undefined): boolean {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function canEditStatus(_role: UserRole | undefined): boolean {
   return true;
 }
 

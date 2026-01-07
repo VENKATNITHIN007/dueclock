@@ -4,7 +4,6 @@ import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import Invite from "@/models/Invite";
 import User from "@/models/User";
-import Audit from "@/models/Audit";
 import { createAudit, AuditActions } from "@/lib/audit";
 
 export async function POST(req: NextRequest) {

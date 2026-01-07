@@ -40,15 +40,15 @@ export async function GET() {
     return NextResponse.json(
       {
         firm: {
-          _id: firm._id.toString(),
+          _id: firm._id?.toString() || "",
           firmName: firm.firmName,
           ownerId: firm.ownerId?.toString(),
         },
         user: {
-          id: user._id.toString(),
+          id: user._id?.toString() || "",
           email: user.email,
           name: user.name || "",
-          phoneNumber: user.phone,
+          phoneNumber: user.phoneNumber,
           role: user.role as "owner" | "admin" | "staff",
         },
       },
@@ -97,7 +97,7 @@ export async function PATCH(req: NextRequest) {
     await connectionToDatabase();
 
     // Get original firm for audit
-    const originalFirm = await Firm.findById(session.user.firmId).lean();
+    const originalFirm = await Firm.findById(session.user.firmId).lean() as IFirm | null;
 
     const firm = await Firm.findByIdAndUpdate(
       session.user.firmId,

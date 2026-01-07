@@ -79,7 +79,7 @@ export function InviteMemberDialog() {
       }
       setInviteCode(data.inviteCode || data.inviteLink || null);
       toast.success("Invite code created");
-    } catch (err) {
+    } catch {
       toast.error("Failed to create invite");
     } finally {
       setLoading(false);

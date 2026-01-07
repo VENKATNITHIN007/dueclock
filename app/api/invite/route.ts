@@ -3,8 +3,6 @@ import { connectionToDatabase } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import Invite from "@/models/Invite";
-import User from "@/models/User";
-import Audit from "@/models/Audit";
 import crypto from "crypto";
 import { canManageMembers, getUserRole } from "@/lib/permissions";
 import { createAudit, AuditActions } from "@/lib/audit";

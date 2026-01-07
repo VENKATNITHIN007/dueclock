@@ -218,7 +218,7 @@ export async function GET(req: Request) {
 
 		// Convert to proper format with string IDs and dates
 		const formattedActivities = activities.map((activity) => ({
-			_id: activity._id.toString(),
+			_id: activity._id?.toString() || "",
 			action: activity.action,
 			actionType: activity.actionType as "created" | "edited" | "deleted",
 			category: (activity as { category?: string }).category || "firm" as "clients" | "duedates" | "firm",
