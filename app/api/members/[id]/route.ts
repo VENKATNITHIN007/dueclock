@@ -6,10 +6,8 @@ import User from "@/models/User";
 import { canManageMembers, getUserRole } from "@/lib/permissions";
 import { createAudit, AuditActions } from "@/lib/audit";
 
-export async function DELETE(
-  _req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(_req: Request, context: any) {
+  const { params } = context;
   try {
     const session = await getServerSession(authOptions);
 
