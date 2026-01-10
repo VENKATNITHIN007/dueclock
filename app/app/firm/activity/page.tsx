@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { formatActivityDetails } from "@/lib/formatActivity";
 import { Plus, Edit, Trash2, Download, Upload, Building2, Users, Calendar } from "lucide-react";
 import { ActivityType, ActivityFilter } from "@/schemas/apiSchemas/activitySchema";
+import { Activity } from "lucide-react";
 
 export default function FirmActivityPage() {
   const router = useRouter();
@@ -17,9 +18,11 @@ export default function FirmActivityPage() {
   const { data: clients } = useFetchClients();
   const { data: dueDates } = useFetchDueDates();
 
-  const [filters, setFilters] = useState({
+  // Simplified state - only period filter by default
+  const [period, setPeriod] = useState<"day" | "week" | "month" | "">("");
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [advancedFilters, setAdvancedFilters] = useState({
     actionType: "" as "created" | "edited" | "deleted" | "",
-    period: "" as "day" | "week" | "month" | "",
     dueDateId: "",
     clientId: "",
   });
@@ -67,17 +70,19 @@ export default function FirmActivityPage() {
 
   const handleApplyFilters = () => {
     const newFilters: Partial<ActivityFilter> = {};
-    if (filters.actionType) newFilters.actionTypes = filters.actionType;
-    if (filters.period) newFilters.period = filters.period;
-    if (filters.dueDateId) newFilters.dueDateId = filters.dueDateId;
-    if (filters.clientId) newFilters.clientId = filters.clientId;
+    if (period) newFilters.period = period;
+    if (showAdvanced) {
+      if (advancedFilters.actionType) newFilters.actionTypes = advancedFilters.actionType;
+      if (advancedFilters.dueDateId) newFilters.dueDateId = advancedFilters.dueDateId;
+      if (advancedFilters.clientId) newFilters.clientId = advancedFilters.clientId;
+    }
     setActiveFilters(newFilters);
   };
 
   const handleClearFilters = () => {
-    setFilters({
+    setPeriod("");
+    setAdvancedFilters({
       actionType: "",
-      period: "",
       dueDateId: "",
       clientId: "",
     });
@@ -137,136 +142,165 @@ export default function FirmActivityPage() {
   };
 
   return (
-    <div className="p-4 max-w-6xl mx-auto space-y-4">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Firm Activity</h1>
+    <div className="p-4 sm:p-6 max-w-6xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Firm Activity</h1>
         <Button variant="outline" onClick={() => router.back()}>Back</Button>
       </div>
 
-      {/* Filters */}
+      {/* Simplified Filters */}
       <Card>
-        <CardContent className="p-4 space-y-4">
-          {/* Action Type Filter */}
+        <CardContent className="p-4 sm:p-6 space-y-5">
+          {/* Quick Period Filter - Always Visible */}
           <div>
-            <label className="text-xs font-medium text-muted-foreground mb-2 block">Action Type</label>
-            <div className="flex gap-2">
+            <label className="text-sm font-medium text-gray-700 mb-3 block">Quick Filter</label>
+            <div className="flex flex-wrap gap-2">
               <Button
                 type="button"
-                variant={filters.actionType === "created" ? "default" : "outline"}
+                variant={period === "day" ? "default" : "outline"}
                 size="sm"
-                onClick={() => setFilters({ ...filters, actionType: filters.actionType === "created" ? "" : "created" })}
-              >
-                <Plus className="h-3 w-3 mr-1" /> Created
-              </Button>
-              <Button
-                type="button"
-                variant={filters.actionType === "edited" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setFilters({ ...filters, actionType: filters.actionType === "edited" ? "" : "edited" })}
-              >
-                <Edit className="h-3 w-3 mr-1" /> Edited
-              </Button>
-              <Button
-                type="button"
-                variant={filters.actionType === "deleted" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setFilters({ ...filters, actionType: filters.actionType === "deleted" ? "" : "deleted" })}
-              >
-                <Trash2 className="h-3 w-3 mr-1" /> Deleted
-              </Button>
-            </div>
-          </div>
-
-          {/* Period Filter */}
-          <div>
-            <label className="text-xs font-medium text-muted-foreground mb-2 block">Period</label>
-            <div className="flex gap-2">
-              <Button
-                type="button"
-                variant={filters.period === "day" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setFilters({ ...filters, period: filters.period === "day" ? "" : "day" })}
+                onClick={() => {
+                  setPeriod(period === "day" ? "" : "day");
+                }}
+                className="flex-1 sm:flex-none"
               >
                 Today
               </Button>
               <Button
                 type="button"
-                variant={filters.period === "week" ? "default" : "outline"}
+                variant={period === "week" ? "default" : "outline"}
                 size="sm"
-                onClick={() => setFilters({ ...filters, period: filters.period === "week" ? "" : "week" })}
+                onClick={() => {
+                  setPeriod(period === "week" ? "" : "week");
+                }}
+                className="flex-1 sm:flex-none"
               >
                 This Week
               </Button>
               <Button
                 type="button"
-                variant={filters.period === "month" ? "default" : "outline"}
+                variant={period === "month" ? "default" : "outline"}
                 size="sm"
-                onClick={() => setFilters({ ...filters, period: filters.period === "month" ? "" : "month" })}
+                onClick={() => {
+                  setPeriod(period === "month" ? "" : "month");
+                }}
+                className="flex-1 sm:flex-none"
               >
                 This Month
               </Button>
             </div>
           </div>
 
-          {/* Client and Due Date Dropdowns */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">Client</label>
-              <select
-                value={filters.clientId}
-                onChange={(e) => setFilters({ ...filters, clientId: e.target.value })}
-                className="w-full rounded border px-3 py-1.5 text-sm"
-              >
-                <option value="">All Clients</option>
-                {clients?.map((client) => (
-                  <option key={client._id} value={client._id}>
-                    {client.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">Due Date</label>
-              <select
-                value={filters.dueDateId}
-                onChange={(e) => setFilters({ ...filters, dueDateId: e.target.value })}
-                className="w-full rounded border px-3 py-1.5 text-sm"
-              >
-                <option value="">All Due Dates</option>
-                {dueDates?.map((due) => (
-                  <option key={due._id} value={due._id}>
-                    {due.title} ({new Date(due.date).toLocaleDateString()})
-                  </option>
-                ))}
-              </select>
-            </div>
+          {/* Advanced Filters Toggle */}
+          <div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              className="text-blue-600 hover:text-blue-700"
+            >
+              {showAdvanced ? "Hide" : "Show"} Advanced Filters
+            </Button>
           </div>
 
+          {/* Advanced Filters - Collapsible */}
+          {showAdvanced && (
+            <div className="space-y-4 pt-4 border-t">
+              {/* Action Type Filter */}
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">Action Type</label>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    variant={advancedFilters.actionType === "created" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setAdvancedFilters({ ...advancedFilters, actionType: advancedFilters.actionType === "created" ? "" : "created" })}
+                  >
+                    <Plus className="h-3 w-3 mr-1" /> Created
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={advancedFilters.actionType === "edited" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setAdvancedFilters({ ...advancedFilters, actionType: advancedFilters.actionType === "edited" ? "" : "edited" })}
+                  >
+                    <Edit className="h-3 w-3 mr-1" /> Edited
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={advancedFilters.actionType === "deleted" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setAdvancedFilters({ ...advancedFilters, actionType: advancedFilters.actionType === "deleted" ? "" : "deleted" })}
+                  >
+                    <Trash2 className="h-3 w-3 mr-1" /> Deleted
+                  </Button>
+                </div>
+              </div>
+
+              {/* Client and Due Date Dropdowns */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">Client</label>
+                  <select
+                    value={advancedFilters.clientId}
+                    onChange={(e) => setAdvancedFilters({ ...advancedFilters, clientId: e.target.value })}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">All Clients</option>
+                    {clients?.map((client) => (
+                      <option key={client._id} value={client._id}>
+                        {client.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">Due Date</label>
+                  <select
+                    value={advancedFilters.dueDateId}
+                    onChange={(e) => setAdvancedFilters({ ...advancedFilters, dueDateId: e.target.value })}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">All Due Dates</option>
+                    {dueDates?.map((due) => (
+                      <option key={due._id} value={due._id}>
+                        {due.title} ({new Date(due.date).toLocaleDateString()})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Action Buttons */}
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Button onClick={handleApplyFilters} className="flex-1">Apply Filters</Button>
-            <Button variant="outline" onClick={handleClearFilters}>Clear All</Button>
+            <Button variant="outline" onClick={handleClearFilters} className="flex-1 sm:flex-none">Clear All</Button>
           </div>
         </CardContent>
       </Card>
 
       {/* Activity List */}
       {isLoading && (
-        <div className="text-center py-8">
-          <p className="text-sm text-muted-foreground">Loading activities...</p>
+        <div className="text-center py-12">
+          <p className="text-sm text-gray-500">Loading activities...</p>
         </div>
       )}
       {isError && (
-        <div className="text-center py-8">
-          <p className="text-sm text-red-600">Failed to load activity</p>
-          <Button variant="outline" onClick={() => refetch()} className="mt-2">Retry</Button>
+        <div className="text-center py-12">
+          <p className="text-sm text-red-600 mb-4">Failed to load activity</p>
+          <Button variant="outline" onClick={() => refetch()}>Retry</Button>
         </div>
       )}
 
       {!isLoading && !isError && activities.length === 0 && (
         <Card>
-          <CardContent className="p-8 text-center">
-            <p className="text-sm text-muted-foreground">No activity found.</p>
+          <CardContent className="p-12 text-center">
+            <Activity className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+            <p className="text-base text-gray-500">No activity found for the selected filters.</p>
           </CardContent>
         </Card>
       )}
@@ -276,47 +310,54 @@ export default function FirmActivityPage() {
           {groupedActivities.map(([dateKey, dateActivities]) => (
             <div key={dateKey} className="space-y-3">
               {/* Date Header */}
-              <div className="border-b pb-2">
-                <h2 className="text-sm font-semibold">{dateKey}</h2>
+              <div className="sticky top-0 bg-white/95 backdrop-blur-sm border-b pb-2 z-10">
+                <h2 className="text-sm font-semibold text-gray-700">{dateKey}</h2>
               </div>
               
-              {/* Activities */}
-              <div className="space-y-2">
-                {dateActivities.map((activity) => {
-                  const { what, forWho, byWho } = formatActivityDetails(activity);
-                  return (
-                    <Card key={activity._id} className="border-l-2 border-l-muted">
-                      <CardContent className="p-3">
-                        <div className="flex items-start gap-3">
-                          <div className="mt-0.5 flex-shrink-0 flex items-center gap-2">
-                            {getCategoryIcon(activity)}
+              {/* Activities Table */}
+              <Card>
+                <CardContent className="p-0">
+                  <div className="divide-y divide-gray-100">
+                    {dateActivities.map((activity) => {
+                      const { what, forWho, byWho } = formatActivityDetails(activity);
+                      return (
+                        <div key={activity._id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors">
+                          {/* Icons */}
+                          <div className="flex-shrink-0 flex items-center gap-1.5">
+                            <div className="hidden sm:block">
+                              {getCategoryIcon(activity)}
+                            </div>
                             {getActionIcon(activity)}
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-sm">
-                              <span className="font-medium">{byWho}</span>{" "}
-                              <span>{what}</span>
-                              {forWho && (
-                                <span className="text-muted-foreground">{forWho.includes(" in ") ? ` for ${forWho}` : ` for ${forWho}`}</span>
-                              )}
-                            </div>
-                            <div className="text-xs text-muted-foreground mt-1">
-                              {new Date(activity.createdAt).toLocaleTimeString()}
-                            </div>
+                          
+                          {/* Time */}
+                          <div className="flex-shrink-0 w-12 text-xs text-gray-500">
+                            {new Date(activity.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </div>
+                          
+                          {/* Activity Details */}
+                          <div className="flex-1 min-w-0 text-sm">
+                            <span className="font-medium text-gray-900">{byWho}</span>{" "}
+                            <span className="text-gray-700">{what}</span>
+                            {forWho && (
+                              <span className="text-gray-600">
+                                {" "}{forWho.includes(" in ") ? `for ${forWho}` : `for ${forWho}`}
+                              </span>
+                            )}
                           </div>
                         </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           ))}
         </div>
       )}
 
       {!isLoading && !isError && activities.length > 0 && (
-        <div className="text-center text-xs text-muted-foreground py-4">
+        <div className="text-center text-sm text-gray-500 py-6 border-t">
           Showing {activities.length} {activities.length === 1 ? "activity" : "activities"}
         </div>
       )}

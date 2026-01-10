@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Mail, MessageCircle, Search, Users, FileText, CheckCircle, Clock, Download, Trash2 } from "lucide-react";
+import { Mail, MessageCircle, Search, Users, FileText, CheckCircle, Clock, Download, Trash2, Filter } from "lucide-react";
 
 import { useFetchDueClients } from "@/hooks/dueClients/useFetchDueClients";
 import { useUpdateDueClient } from "@/hooks/dueClients/useUpdateDueClient";
@@ -133,6 +133,7 @@ export default function DueDetailPage() {
   const [showCompletedWork, setShowCompletedWork] = useState(false);
   const [selectedClients, setSelectedClients] = useState<Set<string>>(new Set());
   const [contactFilter, setContactFilter] = useState<string | null>(null);
+  const [showFilters, setShowFilters] = useState(false);
 
   const filteredRows = useMemo(() => {
     const rows = (data as any[]) ?? [];
@@ -272,7 +273,7 @@ export default function DueDetailPage() {
   // Empty states
   if (rows.length === 0) {
     return (
-      <div className="p-4 space-y-6">
+      <div className="p-4 sm:p-6 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
@@ -302,7 +303,7 @@ export default function DueDetailPage() {
 
   if (filteredRows.length === 0) {
     return (
-      <div className="p-4 space-y-6">
+      <div className="p-4 sm:p-6 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
@@ -391,113 +392,129 @@ export default function DueDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* HEADER - Unified for all screen sizes */}
-      <div className="bg-white border-b">
-        <div className="p-4 space-y-4">
+    <div className="min-h-screen bg-gray-50">
+      {/* HEADER */}
+      <div className="bg-white border-b sticky top-0 z-20">
+        <div className="px-3 sm:px-5 py-3 sm:py-4 max-w-7xl mx-auto space-y-3">
           {/* Title Row */}
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+          <div className="flex items-center justify-between gap-2">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-3 mb-2 flex-wrap">
-                <h1 className="text-xl font-semibold text-slate-900">{header?.dueTitle ?? "Due Date"}</h1>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-700">
-                  <Users size={14} />
-                  {stats.total} Clients
+              <div className="flex items-center gap-2 mb-1">
+                <h1 className="text-base sm:text-xl font-bold text-gray-900 truncate">{header?.dueTitle ?? "Due Date"}</h1>
+                <span className="inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 flex-shrink-0">
+                  <Users size={12} />
+                  {stats.total}
                 </span>
               </div>
-              <p className="text-sm text-slate-600">
+              <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">
                 Due: {formatDate(header?.date) || "No date set"}
               </p>
             </div>
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+              {/* Mobile Filter Button */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowFilters(!showFilters)}
+                className="md:hidden h-8 w-8 p-0"
+              >
+                <Filter size={14} />
+              </Button>
               {selectedClients.size > 0 && (
                 <Button 
-                  variant="outline" 
+                  variant="default"
                   size="sm" 
                   onClick={handleBulkEmail}
-                  className="gap-2"
+                  className="gap-1 bg-blue-600 hover:bg-blue-700 text-xs h-8"
                 >
-                  <Mail size={14} />
-                  Email ({selectedClients.size})
+                  <Mail size={12} className="sm:hidden" />
+                  <span className="hidden sm:inline">Email ({selectedClients.size})</span>
+                  <span className="sm:hidden">({selectedClients.size})</span>
                 </Button>
               )}
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleExportToCSV}
-              className="gap-2"
-            >
-              <Download size={14} />
-                <span className="hidden sm:inline">Export CSV</span>
-                <span className="sm:hidden">Export</span>
-            </Button>
-            <AttachClientsDialog dueDateId={dueDateId} attachedClientIds={attachedClientIds} />
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleExportToCSV}
+                className="gap-1 text-xs h-8 px-2 sm:px-3"
+              >
+                <Download size={12} />
+                <span className="hidden sm:inline">CSV</span>
+              </Button>
+              <AttachClientsDialog dueDateId={dueDateId} attachedClientIds={attachedClientIds} />
+            </div>
+          </div>
+
+          {/* Mobile Due Date - Visible only on mobile */}
+          <p className="text-xs text-gray-600 sm:hidden">
+            Due: {formatDate(header?.date) || "No date set"}
+          </p>
+
+          {/* Stats Row - Hidden on mobile when filters are shown */}
+          <div className={`flex items-center gap-3 sm:gap-4 pt-2 border-t text-xs ${showFilters ? 'hidden md:flex' : 'flex'}`}>
+            <div className="flex items-center gap-1.5">
+              <FileText className="h-3.5 w-3.5 text-orange-600" />
+              <span className="text-gray-600">Docs Pending:</span>
+              <span className="font-bold text-gray-900">{stats.docsPending}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Clock className="h-3.5 w-3.5 text-blue-600" />
+              <span className="text-gray-600">Work Pending:</span>
+              <span className="font-bold text-gray-900">{stats.workPending}</span>
+            </div>
+          </div>
         </div>
       </div>
 
-          {/* Stats Row */}
-          <div className="flex items-center gap-4 pt-3 border-t">
-            <div className="flex items-center gap-2">
-              <div className="text-sm text-slate-600">Docs Pending:</div>
-              <div className="text-sm font-semibold text-slate-900">{stats.docsPending}</div>
-          </div>
-            <div className="flex items-center gap-2">
-              <div className="text-sm text-slate-600">Work Pending:</div>
-              <div className="text-sm font-semibold text-slate-900">{stats.workPending}</div>
-          </div>
-          </div>
-          </div>
-        </div>
-
       {/* FILTER BAR */}
-      <div className="bg-white border-b">
-        <div className="p-4 space-y-3">
+      <div className={`bg-white border-b ${showFilters ? 'block' : 'hidden md:block'}`}>
+        <div className="px-3 sm:px-5 py-3 max-w-7xl mx-auto space-y-3">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={16} />
+            <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
             <Input
-              placeholder="Search clients by name or email..."
+              placeholder="Search clients..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9"
+              className="pl-9 h-9 text-sm"
             />
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 text-xs">
             <select
               value={docFilter ?? ""}
               onChange={(e) => setDocFilter(e.target.value || null)}
-              className="border border-slate-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 rounded px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white"
             >
               <option value="">All Documents</option>
-              <option value="pending">Docs Pending</option>
-              <option value="received">Docs Received</option>
+              <option value="pending">📄 Docs Pending</option>
+              <option value="received">✓ Docs Received</option>
             </select>
             <select
               value={contactFilter ?? ""}
               onChange={(e) => setContactFilter(e.target.value || null)}
-              className="border border-slate-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 rounded px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white"
             >
               <option value="">All Clients</option>
               <option value="not_contacted">Not Contacted</option>
               <option value="contacted">Contacted</option>
-          </select>
-            <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={showCompletedWork}
-              onChange={(e) => setShowCompletedWork(e.target.checked)}
-              className="accent-slate-600"
-            />
-            <span>Show completed work</span>
-          </label>
-          <div className="text-sm text-slate-500 ml-auto">
-              {filteredRows.length} of {rows.length} clients
+            </select>
+            <label className="flex items-center gap-1.5 text-xs text-gray-700 cursor-pointer px-2.5 py-1.5 bg-gray-50 rounded hover:bg-gray-100">
+              <input
+                type="checkbox"
+                checked={showCompletedWork}
+                onChange={(e) => setShowCompletedWork(e.target.checked)}
+                className="accent-blue-600"
+              />
+              <span>Show completed</span>
+            </label>
+            <div className="text-xs text-gray-500 ml-auto font-medium">
+              {filteredRows.length} of {rows.length}
             </div>
           </div>
         </div>
       </div>
 
       {/* MOBILE LIST */}
-      <div className="p-4 space-y-3 md:hidden">
+      <div className="px-3 py-4 space-y-3 md:hidden max-w-7xl mx-auto pb-24">
         {filteredRows.map((c) => {
           const wa = sanitizePhone(c.client.phoneNumber);
           const clientId = String(c._id);
@@ -514,138 +531,137 @@ export default function DueDetailPage() {
             formatDate(header?.date) || "No date set"
           );
           
-          // Determine color based on status (work completed takes priority)
+          // Determine color based on status
           const getStatusColor = () => {
             if (c.workStatus === "completed") {
               return "bg-green-50 border-green-400";
             } else if (c.docStatus === "received") {
               return "bg-blue-50 border-blue-400";
             }
-            return "bg-white border-slate-200";
+            return "bg-white border-gray-200";
           };
 
           return (
-            <Card key={clientId} className={`border shadow-sm ${getStatusColor()}`}>
+            <Card key={clientId} className={`border ${getStatusColor()} shadow-sm`}>
               <CardContent className="p-4">
-                {/* Header */}
-                <div className="flex items-start gap-3 mb-4">
+                {/* Header with Checkbox */}
+                <div className="flex items-start gap-2.5 mb-3">
                   <input
                     type="checkbox"
                     checked={isSelected}
                     onChange={() => toggleClientSelection(clientId)}
-                    className="accent-slate-600 mt-1"
+                    className="accent-blue-600 mt-1"
                   />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                      <p className="font-medium text-slate-900 truncate">{c.client.name}</p>
-                          <StatusBadge type="doc" value={c.docStatus} variant="icon" />
-                          <StatusBadge type="work" value={c.workStatus} variant="icon" />
-                      </div>
-                      {c.client.email && (
-                      <p className="text-sm text-slate-600 truncate">{c.client.email}</p>
-                    )}
-                    {c.client.phoneNumber && (
-                      <p className="text-sm text-slate-600">{c.client.phoneNumber}</p>
-                      )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="font-semibold text-sm text-gray-900 truncate">{c.client.name}</p>
+                      <StatusBadge type="doc" value={c.docStatus} variant="icon" />
+                      <StatusBadge type="work" value={c.workStatus} variant="icon" />
+                    </div>
                   </div>
                 </div>
                 
-                  {/* Status Controls */}
-                <div className="grid grid-cols-2 gap-3 mb-4">
-                    <div>
-                    <label className="text-xs font-medium text-slate-700 block mb-1.5">Docs Status</label>
-                      <StatusSelect
-                        type="doc"
-                        value={c.docStatus}
-                        onChange={(v) =>
-                          updateDueClient.mutate({
-                            id: c._id,
-                            data: { docStatus: v as "pending" | "received" },
-                          })
-                        }
-                      />
-                    </div>
-                    <div>
-                    <label className="text-xs font-medium text-slate-700 block mb-1.5">Work Status</label>
-                      <StatusSelect
-                        type="work"
-                        value={c.workStatus}
-                        onChange={(v) =>
-                          updateDueClient.mutate({
-                            id: c._id,
-                            data: { workStatus: v as "pending" | "completed" },
-                          })
-                        }
-                      />
-                    </div>
+                {/* Status Controls */}
+                <div className="grid grid-cols-2 gap-3 mb-3">
+                  <div>
+                    <label className="text-xs font-medium text-gray-600 block mb-1.5">Documents</label>
+                    <StatusSelect
+                      type="doc"
+                      value={c.docStatus}
+                      onChange={(v) =>
+                        updateDueClient.mutate({
+                          id: c._id,
+                          data: { docStatus: v as "pending" | "received" },
+                        })
+                      }
+                      className="text-xs h-8"
+                    />
                   </div>
-                  
+                  <div>
+                    <label className="text-xs font-medium text-gray-600 block mb-1.5">Work Status</label>
+                    <StatusSelect
+                      type="work"
+                      value={c.workStatus}
+                      onChange={(v) =>
+                        updateDueClient.mutate({
+                          id: c._id,
+                          data: { workStatus: v as "pending" | "completed" },
+                        })
+                      }
+                      className="text-xs h-8"
+                    />
+                  </div>
+                </div>
+                
                 {/* Footer */}
-                <div className="flex items-center justify-between pt-3 border-t border-slate-200">
-                    <div className="text-xs text-slate-500">
-                    {c.lastContactedAt ? formatDateTime(c.lastContactedAt) : "Never contacted"}
-                    </div>
+                <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+                  <div className="text-xs text-gray-600">
+                    {c.lastContactedAt ? (
+                      <span className="font-medium">✓ {formatDateTime(c.lastContactedAt)}</span>
+                    ) : (
+                      <span className="text-orange-600 font-medium">Not contacted</span>
+                    )}
+                  </div>
                   <div className="flex gap-2">
-                      {c.client.email && (
-                        <Button
-                          size="sm"
+                    {c.client.email && (
+                      <Button
+                        size="sm"
                         variant="outline"
-                          className="h-8 w-8 p-0"
-                          onClick={() => {
-                            markContacted(c._id);
+                        className="h-8 w-8 p-0 hover:bg-blue-50"
+                        onClick={() => {
+                          markContacted(c._id);
                           window.location.href = `mailto:${c.client.email}?subject=${subject}&body=${body}`;
-                          }}
-                        >
-                            <Mail size={16} />
-                        </Button>
-                      )}
-                      {wa && (
-                        <Button
-                          size="sm"
+                        }}
+                      >
+                        <Mail size={15} />
+                      </Button>
+                    )}
+                    {wa && (
+                      <Button
+                        size="sm"
                         variant="outline"
-                          className="h-8 w-8 p-0"
-                          onClick={() => {
-                            markContacted(c._id);
+                        className="h-8 w-8 p-0 hover:bg-green-50"
+                        onClick={() => {
+                          markContacted(c._id);
                           window.open(`https://wa.me/${wa}?text=${whatsappMessage}`, '_blank');
-                          }}
-                        >
-                            <MessageCircle size={16} />
+                        }}
+                      >
+                        <MessageCircle size={15} />
+                      </Button>
+                    )}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button size="sm" variant="outline" className="h-8 w-8 p-0 text-red-600 hover:bg-red-50">
+                          <Trash2 size={15} />
                         </Button>
-                      )}
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button size="sm" variant="outline" className="h-8 w-8 p-0 text-red-600 hover:text-red-700">
-                            <Trash2 size={16} />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Remove Client</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to remove {c.client.name} from this due date? 
-                              This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              className="bg-red-600 hover:bg-red-700"
-                              onClick={() => {
-                                deleteDueClient.mutate(c._id, {
-                                  onSuccess: () => {
-                                    toast.success("Client removed from due date");
-                                  },
-                                  onError: () => {
-                                    toast.error("Failed to remove client");
-                                  },
-                                });
-                              }}
-                            >
-                              Remove
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="mx-4 max-w-[90vw] sm:max-w-md">
+                        <AlertDialogHeader>
+                          <AlertDialogTitle className="text-base">Remove Client</AlertDialogTitle>
+                          <AlertDialogDescription className="text-sm">
+                            Remove {c.client.name} from this due date?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel className="text-sm">Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            className="bg-red-600 hover:bg-red-700 text-sm"
+                            onClick={() => {
+                              deleteDueClient.mutate(c._id, {
+                                onSuccess: () => {
+                                  toast.success("Client removed from due date");
+                                },
+                                onError: () => {
+                                  toast.error("Failed to remove client");
+                                },
+                              });
+                            }}
+                          >
+                            Remove
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               </CardContent>
@@ -655,28 +671,28 @@ export default function DueDetailPage() {
       </div>
 
       {/* DESKTOP TABLE */}
-      <div className="hidden md:block p-4">
-        <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div className="hidden md:block p-4 sm:p-5 max-w-7xl mx-auto pb-24">
+        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-slate-50 border-b border-slate-200">
+              <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="text-left p-4 font-medium text-slate-700 w-12">
+                  <th className="text-left p-2.5 text-xs font-semibold text-gray-700 w-10">
                     <input
                       type="checkbox"
                       checked={selectedClients.size === filteredRows.length && filteredRows.length > 0}
                       onChange={toggleSelectAll}
-                      className="accent-slate-600"
+                      className="accent-blue-600"
                     />
                   </th>
-                  <th className="text-left p-4 font-medium text-slate-700">Client</th>
-                  <th className="text-left p-4 font-medium text-slate-700 w-32">Docs Status</th>
-                  <th className="text-left p-4 font-medium text-slate-700 w-32">Work Status</th>
-                  <th className="text-left p-4 font-medium text-slate-700 w-48">Last Contacted</th>
-                  <th className="text-left p-4 font-medium text-slate-700 w-24">Contact</th>
+                  <th className="text-left p-2.5 text-xs font-semibold text-gray-700">Client</th>
+                  <th className="text-left p-2.5 text-xs font-semibold text-gray-700 w-32">Docs</th>
+                  <th className="text-left p-2.5 text-xs font-semibold text-gray-700 w-32">Work</th>
+                  <th className="text-left p-2.5 text-xs font-semibold text-gray-700 w-36">Last Contact</th>
+                  <th className="text-left p-2.5 text-xs font-semibold text-gray-700 w-28">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-gray-100">
                 {filteredRows.map((c) => {
                   const wa = sanitizePhone(c.client.phoneNumber);
                   const clientId = String(c._id);
@@ -696,11 +712,11 @@ export default function DueDetailPage() {
                   // Determine color based on status (work completed takes priority)
                   const getRowColor = () => {
                     if (c.workStatus === "completed") {
-                      return "bg-green-200 hover:bg-green-300";
+                      return "bg-green-50 hover:bg-green-100";
                     } else if (c.docStatus === "received") {
-                      return "bg-yellow-100  hover:bg-yellow-200";
+                      return "bg-blue-50 hover:bg-blue-100";
                     }
-                    return "bg-white hover:bg-slate-200";
+                    return "bg-white hover:bg-gray-50";
                   };
 
                   return (
@@ -708,33 +724,23 @@ export default function DueDetailPage() {
                       key={clientId} 
                       className={`transition-colors ${getRowColor()}`}
                     >
-                      <td className="p-4">
+                      <td className="p-2.5">
                         <input
                           type="checkbox"
                           checked={isSelected}
                           onChange={() => toggleClientSelection(clientId)}
-                          className="accent-slate-600"
+                          className="accent-blue-600"
                         />
                       </td>
-                      <td className="p-4">
-                        <div className="flex items-center gap-3">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="font-medium text-slate-900">{c.client.name}</span>
-                              <StatusBadge type="doc" value={c.docStatus} variant="icon" />
-                              <StatusBadge type="work" value={c.workStatus} variant="icon" />
-                            </div>
-                            {c.client.email && (
-                              <p className="text-sm text-slate-600 truncate">{c.client.email}</p>
-                            )}
-                            {c.client.phoneNumber && (
-                              <p className="text-sm text-slate-600">{c.client.phoneNumber}</p>
-                            )}
-                          </div>
+                      <td className="p-2.5">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-medium text-sm text-gray-900">{c.client.name}</span>
+                          <StatusBadge type="doc" value={c.docStatus} variant="icon" />
+                          <StatusBadge type="work" value={c.workStatus} variant="icon" />
                         </div>
                       </td>
 
-                      <td className="p-4">
+                      <td className="p-2.5">
                         <StatusSelect
                           type="doc"
                           value={c.docStatus}
@@ -744,10 +750,11 @@ export default function DueDetailPage() {
                               data: { docStatus: v as "pending" | "received" },
                             })
                           }
+                          className="text-xs h-7"
                         />
                       </td>
 
-                      <td className="p-4">
+                      <td className="p-2.5">
                         <StatusSelect
                           type="work"
                           value={c.workStatus}
@@ -757,62 +764,66 @@ export default function DueDetailPage() {
                               data: { workStatus: v as "pending" | "completed" },
                             })
                           }
+                          className="text-xs h-7"
                         />
                       </td>
 
-                      <td className="p-4 text-sm text-slate-600">
-                        {c.lastContactedAt ? formatDateTime(c.lastContactedAt) : "Never"}
+                      <td className="p-2.5 text-xs text-gray-600">
+                        {c.lastContactedAt ? (
+                          <span className="font-medium">✓ {formatDateTime(c.lastContactedAt)}</span>
+                        ) : (
+                          <span className="text-orange-600">Not contacted</span>
+                        )}
                       </td>
 
-                      <td className="p-4">
-                        <div className="flex gap-2">
+                      <td className="p-2.5">
+                        <div className="flex gap-1.5">
                           {c.client.email && (
                             <a 
                               href={`mailto:${c.client.email}?subject=${subject}&body=${body}`} 
                               onClick={() => markContacted(c._id)}
                             >
-                              <Button size="sm" variant="outline" className="h-8 w-8 p-0">
+                              <Button size="sm" variant="outline" className="h-7 w-7 p-0 hover:bg-blue-50">
                                 <Mail size={14} />
                               </Button>
                             </a>
                           )}
                           {wa && (
-                            <a 
-                              href={`https://wa.me/${wa}?text=${whatsappMessage}`} 
-                              target="_blank" 
-                              rel="noreferrer" 
+                            <a
+                              href={`https://wa.me/${wa}?text=${whatsappMessage}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
                               onClick={() => markContacted(c._id)}
                             >
-                              <Button size="sm" variant="outline" className="h-8 w-8 p-0">
+                              <Button size="sm" variant="outline" className="h-7 w-7 p-0 hover:bg-green-50">
                                 <MessageCircle size={14} />
                               </Button>
                             </a>
                           )}
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
-                              <Button size="sm" variant="outline" className="h-8 w-8 p-0 text-red-600 hover:text-red-700">
+                              <Button size="sm" variant="outline" className="h-7 w-7 p-0 text-red-600 hover:bg-red-50">
                                 <Trash2 size={14} />
                               </Button>
                             </AlertDialogTrigger>
-                            <AlertDialogContent>
+                            <AlertDialogContent className="max-w-md">
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Remove Client</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Are you sure you want to remove {c.client.name} from this due date? 
-                                  This action cannot be undone.
+                                <AlertDialogTitle className="text-base">Remove Client</AlertDialogTitle>
+                                <AlertDialogDescription className="text-sm">
+                                  Remove {c.client.name} from this due date?
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogCancel className="text-sm">Cancel</AlertDialogCancel>
                                 <AlertDialogAction
-                                  className="bg-red-600 hover:bg-red-700"
+                                  className="bg-red-600 hover:bg-red-700 text-sm"
                                   onClick={() => {
                                     deleteDueClient.mutate(c._id, {
                                       onSuccess: () => {
-                                        toast.success("Client removed from due date");
+                                        toast.success("Client removed");
                                       },
                                       onError: () => {
-                                        toast.error("Failed to remove client");
+                                        toast.error("Failed to remove");
                                       },
                                     });
                                   }}

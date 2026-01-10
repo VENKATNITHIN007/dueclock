@@ -20,12 +20,14 @@ export default function Sidebar() {
   const router = useRouter();
 
   return (
-    <aside className="hidden md:flex md:flex-col md:w-64 border-r bg-white">
-      <div className="px-4 py-4 border-b flex items-center">
-        <div  className="text-lg font-bold"  aria-label="Go to dashboard"><span className="text-orange-400">Due</span>clock</div>
+    <aside className="hidden md:flex md:flex-col md:w-60 border-r bg-white">
+      <div className="px-4 py-3.5 border-b flex items-center">
+        <div className="text-base font-bold" aria-label="Go to dashboard">
+          <span className="text-blue-600">Due</span>clock
+        </div>
       </div>
 
-      <nav className="flex-1 px-2 py-4 space-y-1" aria-label="Main navigation">
+      <nav className="flex-1 px-3 py-3 space-y-1" aria-label="Main navigation">
         {LINKS.map((l) => {
           const active = pathname.startsWith(l.href);
           const Icon = l.Icon;
@@ -34,13 +36,13 @@ export default function Sidebar() {
               key={l.href}
               onClick={() => router.push(l.href)}
               className={cn(
-                "flex items-center gap-3 w-full text-left rounded-md px-3 py-2 text-sm transition",
-                active ? "bg-sky-100 text-sky-800" : "text-slate-700 hover:bg-slate-100"
+                "flex items-center gap-2.5 w-full text-left rounded-md px-3 py-2.5 text-sm transition-colors",
+                active ? "bg-blue-50 text-blue-700 font-medium" : "text-gray-700 hover:bg-gray-50"
               )}
               type="button"
               aria-current={active ? "page" : undefined}
             >
-              <Icon className="h-5 w-5" aria-hidden />
+              <Icon className="h-4 w-4" aria-hidden />
               <span>{l.label}</span>
             </button>
           );

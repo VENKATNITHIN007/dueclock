@@ -1,8 +1,16 @@
 import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import Script from "next/script";
 import RegisterSW from "@/components/Register";
+
+// Optimize font loading
+const inter = Inter({ 
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
 
 // for google analytics
 const MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
@@ -22,9 +30,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  themeColor: "#000000",
+  themeColor: "#2563eb",
 };
 
 export default function RootLayout({
@@ -35,6 +41,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Preconnect to external domains for faster loading */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {MEASUREMENT_ID && <link rel="preconnect" href="https://www.googletagmanager.com" />}
+        
         {/* Force favicon / icons to be visible to crawlers and browsers */}
         <link rel="icon" href="/favicon.ico" />
         <link rel="shortcut icon" href="/favicon.ico" />
@@ -86,7 +97,7 @@ export default function RootLayout({
         )}
       </head>
 
-      <body className="antialiased">
+      <body className={`${inter.variable} antialiased font-sans`}>
         <Providers>
           {children}
           <RegisterSW />

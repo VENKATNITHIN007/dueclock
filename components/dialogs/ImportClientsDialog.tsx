@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { useQueryClient } from "@tanstack/react-query"
 import { queryKeys } from "@/lib/querykeys"
+import { Upload } from "lucide-react"
 
 function splitCSVLine(line: string) {
   const parts = line.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/);
@@ -128,45 +129,63 @@ export default function ImportClientsDialog() {
         <Button>Import CSV</Button>
       </DialogTrigger>
 
-      <DialogContent>
+      <DialogContent className="max-w-[95vw] sm:max-w-lg mx-auto max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Import Clients from CSV</DialogTitle>
+          <DialogTitle className="text-lg sm:text-xl">Import Clients from CSV</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <h3 className="text-sm font-semibold">CSV Format Requirements</h3>
-            <ul className="text-xs text-gray-600 space-y-1 list-disc list-inside">
-              <li>CSV must have a header row with column names</li>
-              <li><strong>name</strong> - Required field (cannot be empty)</li>
-              <li><strong>phoneNumber</strong> - Optional, must start with +91 if provided</li>
-              <li><strong>email</strong> - Optional, must be a valid email format if provided</li>
+            <h3 className="text-sm font-semibold text-gray-900">CSV Format Requirements</h3>
+            <ul className="text-xs sm:text-sm text-gray-600 space-y-1.5 list-disc list-inside">
+              <li><strong>name</strong> - Required field</li>
+              <li><strong>phoneNumber</strong> - Optional, must start with +91</li>
+              <li><strong>email</strong> - Optional, valid email format</li>
             </ul>
           </div>
 
-          <div className="bg-gray-50 p-3 rounded border">
-            <p className="text-xs font-semibold mb-1">Example CSV Header:</p>
-            <code className="text-xs font-mono">name,phoneNumber,email</code>
+          <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+            <p className="text-xs font-semibold mb-1.5 text-gray-900">Example CSV Header:</p>
+            <code className="text-xs font-mono bg-white px-2 py-1.5 rounded border border-gray-200 block break-all">name,phoneNumber,email</code>
           </div>
 
-          <input
-            type="file"
-            accept="text/csv"
-            onChange={(e) => onFile(e.target.files?.[0])}
-          />
+          {/* Custom File Upload Button with Hover State */}
+          <div className="relative">
+            <label 
+              htmlFor="csv-upload"
+              className="flex flex-col items-center justify-center w-full h-28 sm:h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-blue-50 hover:border-blue-400 transition-all group"
+            >
+              <div className="flex flex-col items-center justify-center pt-4 pb-4">
+                <Upload className="w-8 h-8 sm:w-10 sm:h-10 mb-2 text-gray-400 group-hover:text-blue-600 transition-colors" />
+                <p className="mb-1 text-xs sm:text-sm text-gray-600 group-hover:text-blue-700 text-center px-2">
+                  <span className="font-semibold">Click to upload</span> or drag and drop
+                </p>
+                <p className="text-xs text-gray-500">CSV files only</p>
+              </div>
+              <input
+                id="csv-upload"
+                type="file"
+                accept="text/csv"
+                className="hidden"
+                onChange={(e) => onFile(e.target.files?.[0])}
+              />
+            </label>
+          </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded p-3">
-              <p className="text-sm font-semibold text-red-800 mb-2">Validation Errors:</p>
-              <pre className="text-xs text-red-700 whitespace-pre-wrap font-sans">{error}</pre>
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+              <p className="text-xs sm:text-sm font-semibold text-red-800 mb-2">Validation Errors:</p>
+              <pre className="text-xs text-red-700 whitespace-pre-wrap font-sans max-h-40 overflow-y-auto">{error}</pre>
             </div>
           )}
           {previewCount !== null && (
-            <p className="text-sm text-green-600">Imported {previewCount} clients successfully.</p>
+            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+              <p className="text-xs sm:text-sm text-green-700 font-medium">✓ Imported {previewCount} clients successfully.</p>
+            </div>
           )}
 
-          <div className="flex justify-end">
-            <Button variant="outline" onClick={() => setOpen(false)}>Close</Button>
+          <div className="flex gap-3 pt-2">
+            <Button variant="outline" onClick={() => setOpen(false)} className="flex-1 text-sm">Close</Button>
           </div>
         </div>
       </DialogContent>

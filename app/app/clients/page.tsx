@@ -74,31 +74,24 @@ export default function ClientsPage() {
       </div>
 
       {/* Mobile: Cards */}
-      {/* Mobile: Cards */}
-      <div className="grid gap-4 md:hidden px-4 pb-28">
+      <div className="grid gap-3 md:hidden px-4 pb-28">
         {clients?.map((c) => (
-          <Card key={c._id} className="w-full rounded-2xl shadow-md">
-            <CardContent className="p-4 space-y-2">
-              <p className="font-semibold text-lg">{c.name}</p>
-              <p className="text-sm text-gray-600">
-                {c.phoneNumber || "No phone"}
-              </p>
-              <p className="text-sm text-gray-600">{c.email || "No email"}</p>
-              <p className="text-sm font-medium text-red-600">
-                Pending Dues: {c.pendingDues}
-              </p>
-
-              <div className="flex gap-2 pt-2">
-                <Link href={`/app/clients/${c._id}`}>
-                  <Button size="sm" variant="outline">
-                    View
-                  </Button>
-                </Link>
-
-                {canAdd && <ClientFormDialog client={c} />}
-              </div>
-            </CardContent>
-          </Card>
+          <Link key={c._id} href={`/app/clients/${c._id}`}>
+            <Card className="w-full rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer border-l-4 border-l-blue-500 bg-gradient-to-r from-blue-50/50 to-white">
+              <CardContent className="p-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-base text-gray-900 truncate">{c.name}</p>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-red-100 text-red-700">
+                      {c.pendingDues} {c.pendingDues === 1 ? 'due' : 'dues'}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
         ))}
       </div>
       {/* Desktop: Table */}

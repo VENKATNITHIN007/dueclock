@@ -4,11 +4,11 @@ type DocValue = "pending" | "received";
 type WorkValue = "pending" | "completed";
 
 type Props =
-  | { type: "doc"; value: DocValue; onChange: (v: DocValue) => void }
-  | { type: "work"; value: WorkValue; onChange: (v: WorkValue) => void };
+  | { type: "doc"; value: DocValue; onChange: (v: DocValue) => void; className?: string }
+  | { type: "work"; value: WorkValue; onChange: (v: WorkValue) => void; className?: string };
 
 export function StatusSelect(props: Props) {
-  const { type, value, onChange } = props;
+  const { type, value, onChange, className = "" } = props;
 
   return (
     <select
@@ -21,7 +21,7 @@ export function StatusSelect(props: Props) {
         (value === "completed" || value === "received")
           ? "text-emerald-600"
           : "text-yellow-600"
-      }`}
+      } ${className}`}
     >
       {type === "doc" ? (
         <>

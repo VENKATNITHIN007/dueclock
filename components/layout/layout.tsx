@@ -39,10 +39,10 @@ export default function AppLayout({
   const toggleSidebar = () => setSidebarVisible((v) => !v);
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar visible only on md+ and only when sidebarVisible is true */}
       {sidebarVisible && (
-        <aside className="hidden md:block md:w-64 border-r bg-white">
+        <aside className="hidden md:block md:w-60 border-r bg-white">
           <Sidebar />
         </aside>
       )}
@@ -58,7 +58,7 @@ export default function AppLayout({
           <MobileHeader />
         </div>
 
-        <main className="flex-1 p-6 overflow-auto transition-colors duration-150 pb-20 md:pb-6">
+        <main className="flex-1 overflow-auto transition-colors duration-150 pb-20 md:pb-0">
           {children}
         </main>
       </div>

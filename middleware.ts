@@ -17,7 +17,7 @@ const PUBLIC_ASSET_PREFIXES = [
   "/icon-",
 ];
 
-const PUBLIC_PAGES = ["/", "/login", "/contactus", "/app/onboarding"];
+const PUBLIC_PAGES = ["/", "/login", "/contactus", "/terms", "/privacy", "/refund", "/app/onboarding"];
 
 // Public API routes that don't require authentication
 const PUBLIC_API_ROUTES = [

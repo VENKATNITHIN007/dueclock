@@ -18,18 +18,18 @@ export default function Topbar({
   const goProfile = () => router.push("/app/firm");
 
   return (
-    <header className="hidden md:flex items-center justify-between px-4 py-3 border-b bg-white">
+    <header className="hidden md:flex items-center justify-between px-4 py-2.5 border-b bg-white">
       {/* LEFT: app title + sidebar toggle (desktop) */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <div className="hidden md:flex items-center">
           <button
             onClick={() => onToggleSidebar?.()}
             aria-pressed={sidebarVisible}
             aria-label={sidebarVisible ? "Hide sidebar" : "Show sidebar"}
-            className="ml-2 px-2 py-1 rounded hover:bg-gray-50 flex items-center gap-2"
+            className="px-2 py-1.5 rounded hover:bg-gray-50 flex items-center gap-2 transition-colors"
             type="button"
           >
-            <Menu className="h-5 w-5" />
+            <Menu className="h-4 w-4" />
           </button>
         </div>
       </div>
@@ -38,14 +38,15 @@ export default function Topbar({
       <div />
 
       {/* RIGHT: desktop actions */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <button
           onClick={goProfile}
-          className="px-3 py-1 rounded hover:bg-gray-50"
+          className="px-3 py-1.5 rounded hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors flex items-center gap-2"
           type="button"
           aria-label="Open profile"
         >
-          <User className="inline-block h-4 w-4 mr-2" /> Profile
+          <User className="h-4 w-4" />
+          <span>Profile</span>
         </button>
        
       </div>

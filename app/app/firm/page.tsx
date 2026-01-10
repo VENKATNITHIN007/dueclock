@@ -90,22 +90,22 @@ export default function FirmPage() {
   const isOwner = user?.role === "owner";
 
   return (
-    <div className="max-w-2xl mx-auto px-3 sm:px-4 sm:p-6 space-y-4 sm:space-y-6">
+    <div className="max-w-3xl mx-auto px-4 py-4 space-y-4">
       {/* Header */}
-      <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
-        <h1 className="text-xl xs:text-2xl sm:text-3xl font-bold leading-tight">
+      <div className="flex items-center justify-between gap-3 mb-4">
+        <h1 className="text-xl sm:text-2xl font-bold">
           Firm
         </h1>
 
         {/* Owner actions + logout */}
-        <div className="flex items-center flex-wrap gap-2">
+        <div className="flex items-center gap-2">
           {isOwner && (
             <>
               <InviteMemberDialog />
               <Button 
                 variant="outline" 
                 size="sm"
-                className="text-xs sm:text-sm"
+                className="text-xs"
                 onClick={() => router.push("/app/firm/activity")}
               >
                 Activity
@@ -117,45 +117,45 @@ export default function FirmPage() {
       </div>
 
       {/* Firm Info Card */}
-      <Card className="overflow-hidden">
-        <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+      <Card className="border-gray-200">
+        <CardContent className="p-4 space-y-4">
           {/* Firm avatar + name */}
-          <div className="flex flex-col xs:flex-row xs:items-center gap-3 sm:gap-4">
-            <Avatar className="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0">
-              <AvatarFallback>
+          <div className="flex items-center gap-3">
+            <Avatar className="h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0">
+              <AvatarFallback className="text-sm font-semibold">
                 {firm?.firmName?.[0] ?? user?.name?.[0] ?? "F"}
               </AvatarFallback>
             </Avatar>
 
             <div className="min-w-0 flex-1">
-              <h2 className="text-base sm:text-lg md:text-xl font-semibold truncate">
+              <h2 className="text-base sm:text-lg font-semibold truncate">
                 {firm?.firmName ?? user?.name ?? "Your Firm"}
               </h2>
-              <p className="text-xs sm:text-sm text-muted-foreground truncate">
+              <p className="text-xs text-gray-600 truncate">
                 {user?.email ?? "—"}
               </p>
             </div>
           </div>
 
           {/* Firm details */}
-          <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
+          <div className="space-y-2 text-sm">
             <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Firm name</span>
-              <span className="truncate text-right max-w-[60%]">{firm?.firmName ?? "—"}</span>
+              <span className="text-gray-600">Firm</span>
+              <span className="truncate text-right max-w-[60%] font-medium">{firm?.firmName ?? "—"}</span>
             </div>
 
             <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Your name</span>
-              <span className="truncate text-right max-w-[60%]">{user?.name ?? "—"}</span>
+              <span className="text-gray-600">Name</span>
+              <span className="truncate text-right max-w-[60%] font-medium">{user?.name ?? "—"}</span>
             </div>
 
             <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Your email</span>
-              <span className="truncate text-right max-w-[60%]">{user?.email ?? "—"}</span>
+              <span className="text-gray-600">Email</span>
+              <span className="truncate text-right max-w-[60%] font-medium">{user?.email ?? "—"}</span>
             </div>
 
             <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Your role</span>
+              <span className="text-gray-600">Role</span>
               <Badge variant="outline" className="capitalize text-xs">
                 {user?.role ?? "—"}
               </Badge>
@@ -163,7 +163,7 @@ export default function FirmPage() {
           </div>
 
           {/* Edit buttons */}
-          <div className="pt-3 sm:pt-4 border-t">
+          <div className="pt-3 border-t">
             {isOwner ? (
               <FirmFormDialog firmName={firm?.firmName || ""} userName={user?.name || ""} />
             ) : (
@@ -175,35 +175,35 @@ export default function FirmPage() {
 
       {/* Members Section - Only visible to owner */}
       {isOwner && (
-        <Card>
-          <CardHeader className="px-4 sm:px-6 pt-4 sm:pt-6">
-            <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-2">
-              <CardTitle className="text-lg sm:text-xl">Team Members</CardTitle>
+        <Card className="border-gray-200">
+          <CardHeader className="px-4 pt-4 pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base sm:text-lg">Team Members</CardTitle>
               <InviteMemberDialog />
             </div>
           </CardHeader>
-          <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6">
+          <CardContent className="px-4 pb-4">
             {membersLoading ? (
-              <p className="text-sm text-muted-foreground">Loading members...</p>
+              <p className="text-sm text-gray-500">Loading members...</p>
             ) : members && members.length > 0 ? (
-              <div className="space-y-2 sm:space-y-3">
+              <div className="space-y-2">
                 {members.map((member) => (
                   <div
                     key={member._id}
-                    className="flex flex-col xs:flex-row xs:items-center justify-between p-3 rounded-lg border bg-card gap-2 sm:gap-0"
+                    className="flex items-center justify-between p-3 rounded-lg border border-gray-200 bg-white"
                   >
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
-                        <AvatarFallback>
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <Avatar className="h-8 w-8 flex-shrink-0">
+                        <AvatarFallback className="text-xs">
                           {member.name?.[0]?.toUpperCase() ?? member.email?.[0]?.toUpperCase() ?? "U"}
                         </AvatarFallback>
                       </Avatar>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium truncate">{member.name || "Unknown"}</p>
-                        <p className="text-xs text-muted-foreground truncate">{member.email}</p>
+                        <p className="text-xs text-gray-600 truncate">{member.email}</p>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between xs:justify-end gap-2 w-full xs:w-auto">
+                    <div className="flex items-center gap-2 flex-shrink-0">
                       <Badge
                         variant={member.role === "owner" ? "default" : member.role === "admin" ? "secondary" : "outline"}
                         className="capitalize text-xs"
@@ -216,24 +216,24 @@ export default function FirmPage() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-8 w-8 p-0"
+                              className="h-7 w-7 p-0"
                               disabled={deleteMemberMutation.isPending}
                             >
-                              <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 text-red-600" />
+                              <Trash2 className="h-3.5 w-3.5 text-red-600" />
                             </Button>
                           </AlertDialogTrigger>
-                          <AlertDialogContent className="max-w-[95vw] sm:max-w-md">
+                          <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Remove Member</AlertDialogTitle>
+                              <AlertDialogTitle className="text-base">Remove Member</AlertDialogTitle>
                               <AlertDialogDescription className="text-sm">
-                                Are you sure you want to remove {member.name || member.email} from the firm? 
-                                They will no longer be able to access the firm.
+                                Remove {member.name || member.email} from the firm? 
+                                They will lose access.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel className="mt-0">Cancel</AlertDialogCancel>
+                              <AlertDialogCancel className="text-sm">Cancel</AlertDialogCancel>
                               <AlertDialogAction
-                                className="bg-red-600 hover:bg-red-700"
+                                className="bg-red-600 hover:bg-red-700 text-sm"
                                 onClick={() => handleDeleteMember(member._id)}
                               >
                                 Remove
@@ -247,7 +247,7 @@ export default function FirmPage() {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">No members found. Invite team members to get started.</p>
+              <p className="text-sm text-gray-500">No members. Invite team members to get started.</p>
             )}
           </CardContent>
         </Card>
