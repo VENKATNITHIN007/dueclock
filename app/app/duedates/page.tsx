@@ -136,10 +136,10 @@ export default function DueDatesPage() {
   /* ---------------- card ---------------- */
 
   function DueCard({ d }: { d: DueDateListItemType }) {
-    const total = d.totalClients;
-    const pending = d.pendingCount;
-    const done = total - pending;
-    const progress = total ? Math.round((done / total) * 100) : 0;
+    const totalClients = d.totalClients ?? 0;
+    const pending = d.pendingCount ?? 0;
+    const done = totalClients - pending;
+    const progress = totalClients ? Math.round((done / totalClients) * 100) : 0;
 
     return (
       <Card className="group hover:shadow-lg transition-all duration-200 border border-gray-200 bg-white hover:border-blue-300">
@@ -227,7 +227,7 @@ export default function DueDatesPage() {
               <p className="text-xs font-medium text-gray-600 flex items-center justify-center gap-1 mb-1.5">
                 <Users size={13} className="text-gray-500" /> Total
               </p>
-              <p className="font-bold text-lg text-gray-900">{total}</p>
+              <p className="font-bold text-lg text-gray-900">{totalClients}</p>
             </div>
             <div className="bg-amber-50 border border-amber-200 rounded-md p-3 text-center">
               <p className="text-xs font-medium text-amber-700 flex items-center justify-center gap-1 mb-1.5">
@@ -238,7 +238,7 @@ export default function DueDatesPage() {
           </div>
 
           {/* progress */}
-          {total > 0 && (
+          {totalClients > 0 && (
             <Progress value={progress} className="h-2" />
           )}
 

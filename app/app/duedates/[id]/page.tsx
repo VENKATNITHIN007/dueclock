@@ -410,13 +410,13 @@ export default function DueDetailPage() {
                 Due: {formatDate(header?.date) || "No date set"}
               </p>
             </div>
-            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
               {/* Mobile Filter Button */}
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setShowFilters(!showFilters)}
-                className="md:hidden h-8 w-8 p-0"
+                className="md:hidden h-8 w-8 p-0 flex-shrink-0"
               >
                 <Filter size={14} />
               </Button>
@@ -425,21 +425,21 @@ export default function DueDetailPage() {
                   variant="default"
                   size="sm" 
                   onClick={handleBulkEmail}
-                  className="gap-1 bg-blue-600 hover:bg-blue-700 text-xs h-8"
+                  className="gap-1 bg-blue-600 hover:bg-blue-700 text-xs h-8 px-2 flex-shrink-0"
                 >
-                  <Mail size={12} className="sm:hidden" />
-                  <span className="hidden sm:inline">Email ({selectedClients.size})</span>
-                  <span className="sm:hidden">({selectedClients.size})</span>
+                  <Mail size={12} />
+                  <span className="hidden sm:inline">({selectedClients.size})</span>
+                  <span className="sm:hidden text-xs">({selectedClients.size})</span>
                 </Button>
               )}
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={handleExportToCSV}
-                className="gap-1 text-xs h-8 px-2 sm:px-3"
+                className="gap-1 text-xs h-8 px-2 flex-shrink-0"
               >
                 <Download size={12} />
-                <span className="hidden sm:inline">CSV</span>
+                <span className="hidden sm:inline text-xs">CSV</span>
               </Button>
               <AttachClientsDialog dueDateId={dueDateId} attachedClientIds={attachedClientIds} />
             </div>
