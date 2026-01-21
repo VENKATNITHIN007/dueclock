@@ -3,8 +3,10 @@
 
 import React from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Users, CalendarDays, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { canAddOrDelete } from "@/lib/permissions";
 
 
 const LINKS = [
@@ -18,6 +20,13 @@ const LINKS = [
 export default function Sidebar() {
   const pathname = usePathname() ?? "";
   const router = useRouter();
+  const { data: session } = useSession();
+  const canManage = canAddOrDelete(session?.user?.role);
+
+  // Filter out subscription link for staff
+  const links = LINKS.filter(link => 
+    link.href !== "/app/subscription" || canManage
+  );
 
   return (
     <aside className="hidden md:flex md:flex-col md:w-60 border-r bg-white">
@@ -28,7 +37,7 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 px-3 py-3 space-y-1" aria-label="Main navigation">
-        {LINKS.map((l) => {
+        {links.map((l) => {
           const active = pathname.startsWith(l.href);
           const Icon = l.Icon;
           return (

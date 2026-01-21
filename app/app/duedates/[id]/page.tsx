@@ -2,10 +2,12 @@
 
 import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Mail, MessageCircle, Search, Users, FileText, CheckCircle, Clock, Download, Trash2, Filter } from "lucide-react";
+import { canAddOrDelete } from "@/lib/permissions";
 
 import { useFetchDueClients } from "@/hooks/dueClients/useFetchDueClients";
 import { useUpdateDueClient } from "@/hooks/dueClients/useUpdateDueClient";
@@ -122,11 +124,14 @@ function DueDetailSkeleton() {
 export default function DueDetailPage() {
   const { id } = useParams();
   const dueDateId = id as string;
+  const { data: session } = useSession();
 
   const { data, isLoading, isError } = useFetchDueClients(dueDateId);
   const updateDueClient = useUpdateDueClient(dueDateId);
   const deleteDueClient = useDeleteDueClient(dueDateId);
   const queryClient = useQueryClient();
+  
+  const canAdd = canAddOrDelete(session?.user?.role);
 
   const [search, setSearch] = useState("");
   const [docFilter, setDocFilter] = useState<string | null>(null);
@@ -287,14 +292,14 @@ export default function DueDetailPage() {
               Due: {formatDate(header?.date) || "No date set"}
             </p>
           </div>
-            <AttachClientsDialog dueDateId={dueDateId} attachedClientIds={attachedClientIds} />
+            {canAdd && <AttachClientsDialog dueDateId={dueDateId} attachedClientIds={attachedClientIds} />}
         </div>
         <EmptyState
           title="No clients attached"
           description="Add clients to this due date to start tracking their document and work progress."
           icon={Users}
           action={
-            <AttachClientsDialog dueDateId={dueDateId} attachedClientIds={attachedClientIds}  />
+            canAdd ? <AttachClientsDialog dueDateId={dueDateId} attachedClientIds={attachedClientIds}  /> : undefined
           }
         />
       </div>
@@ -327,7 +332,7 @@ export default function DueDetailPage() {
               <Download size={14} />
               Export
             </Button>
-            <AttachClientsDialog dueDateId={dueDateId} attachedClientIds={attachedClientIds} />
+            {canAdd && <AttachClientsDialog dueDateId={dueDateId} attachedClientIds={attachedClientIds} />}
           </div>
         </div>
 
@@ -410,16 +415,9 @@ export default function DueDetailPage() {
                 Due: {formatDate(header?.date) || "No date set"}
               </p>
             </div>
-            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-              {/* Mobile Filter Button */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowFilters(!showFilters)}
-                className="md:hidden h-8 w-8 p-0 flex-shrink-0"
-              >
-                <Filter size={14} />
-              </Button>
+            
+            {/* Desktop: All buttons in one row */}
+            <div className="hidden md:flex items-center gap-1 sm:gap-2 flex-shrink-0">
               {selectedClients.size > 0 && (
                 <Button 
                   variant="default"
@@ -428,8 +426,7 @@ export default function DueDetailPage() {
                   className="gap-1 bg-blue-600 hover:bg-blue-700 text-xs h-8 px-2 flex-shrink-0"
                 >
                   <Mail size={12} />
-                  <span className="hidden sm:inline">({selectedClients.size})</span>
-                  <span className="sm:hidden text-xs">({selectedClients.size})</span>
+                  <span>({selectedClients.size})</span>
                 </Button>
               )}
               <Button 
@@ -439,9 +436,47 @@ export default function DueDetailPage() {
                 className="gap-1 text-xs h-8 px-2 flex-shrink-0"
               >
                 <Download size={12} />
-                <span className="hidden sm:inline text-xs">CSV</span>
+                <span className="text-xs">CSV</span>
               </Button>
-              <AttachClientsDialog dueDateId={dueDateId} attachedClientIds={attachedClientIds} />
+              {canAdd && <AttachClientsDialog dueDateId={dueDateId} attachedClientIds={attachedClientIds} />}
+            </div>
+            
+            {/* Mobile: Buttons split into two rows */}
+            <div className="flex md:hidden flex-col gap-2 flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="h-8 px-2 gap-1 flex-1"
+                >
+                  <Filter size={14} />
+                  <span className="text-xs">Filter</span>
+                </Button>
+                {selectedClients.size > 0 && (
+                  <Button 
+                    variant="default"
+                    size="sm" 
+                    onClick={handleBulkEmail}
+                    className="gap-1 bg-blue-600 hover:bg-blue-700 text-xs h-8 px-2 flex-1"
+                  >
+                    <Mail size={12} />
+                    <span className="text-xs">Email ({selectedClients.size})</span>
+                  </Button>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleExportToCSV}
+                  className="gap-1 text-xs h-8 px-2 flex-1"
+                >
+                  <Download size={12} />
+                  <span className="text-xs">Export CSV</span>
+                </Button>
+                {canAdd && <AttachClientsDialog dueDateId={dueDateId} attachedClientIds={attachedClientIds} />}
+              </div>
             </div>
           </div>
 

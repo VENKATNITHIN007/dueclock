@@ -17,12 +17,12 @@ export default function SignInButton() {
   };
 
   return (
-    <button 
+    <button
       onClick={handle}
       disabled={loading}
-      className="inline-flex items-center justify-center gap-2.5 bg-blue-600 text-white rounded-lg px-6 py-3 text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-70 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+      className="inline-flex items-center justify-center gap-2.5 px-7 py-3 rounded-xl font-semibold text-base bg-gradient-to-r from-orange-500 via-orange-600 to-orange-500 text-white shadow-lg transition-colors duration-150 hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-orange-400/60 disabled:opacity-70 disabled:cursor-not-allowed"
     >
-      <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+      <svg className="h-5 w-5" viewBox="0 0 24 24" aria-label="Google logo">
         <path
           fill="#4285F4"
           d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -40,8 +40,8 @@ export default function SignInButton() {
           d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
         />
       </svg>
-      <span className="font-semibold">
-        {loading ? "Signing in…" : "Continue with Google"}
+      <span className="font-semibold drop-shadow-sm">
+        {loading ? "Signing in…" : "Get Started for Free"}
       </span>
       {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
     </button>

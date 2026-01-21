@@ -90,7 +90,7 @@ export default function FirmPage() {
   const isOwner = user?.role === "owner";
 
   return (
-    <div className="min-h-screen max-w-3xl mx-auto px-4 py-4 space-y-4">
+    <div className="max-w-3xl mx-auto px-4 py-4 pb-4 md:pb-4 space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between gap-3 mb-4">
         <h1 className="text-xl sm:text-2xl font-bold">

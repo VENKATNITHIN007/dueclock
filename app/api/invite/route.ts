@@ -34,9 +34,10 @@ export async function POST(req: NextRequest) {
       expiresAt: { $gt: new Date() },
     });
     if (existingInvite) {
+      // Return the existing invite code instead of throwing an error
       return NextResponse.json(
-        { error: "An invite has already been sent to this email. Please wait for the user to accept it or resend after it expires." },
-        { status: 400 }
+        { inviteCode: existingInvite.token, existing: true },
+        { status: 200 }
       );
     }
 

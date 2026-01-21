@@ -1,7 +1,7 @@
 // components/layout/AppLayout.tsx
 "use client";
 
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState, useMemo } from "react";
 import Sidebar from "./sidebar/sidebar";
 import Topbar from "./topbar/topbar";
 import BottomBar from "./bottombar/bottombar";
@@ -38,14 +38,23 @@ export default function AppLayout({
 
   const toggleSidebar = () => setSidebarVisible((v) => !v);
 
+  // Memoize sidebar and bottom bar to prevent unnecessary re-renders
+  const sidebarComponent = useMemo(() => sidebarVisible && (
+    <aside className="hidden md:block md:w-60 border-r bg-white">
+      <Sidebar />
+    </aside>
+  ), [sidebarVisible]);
+
+  const bottomBarComponent = useMemo(() => (
+    <div className="md:hidden">
+      <BottomBar />
+    </div>
+  ), []);
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar visible only on md+ and only when sidebarVisible is true */}
-      {sidebarVisible && (
-        <aside className="hidden md:block md:w-60 border-r bg-white">
-          <Sidebar />
-        </aside>
-      )}
+      {sidebarComponent}
 
       {/* Main area: when sidebar hidden the main expands naturally */}
       <div className="flex-1 flex flex-col min-h-screen">
@@ -64,9 +73,7 @@ export default function AppLayout({
       </div>
 
       {/* Mobile bottom bar */}
-      <div className="md:hidden">
-        <BottomBar />
-      </div>
+      {bottomBarComponent}
     </div>
   );
 }

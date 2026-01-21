@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useFetchClientById } from "@/hooks/clients/useFetchClientById";
 import { useDeleteClient } from "@/hooks/clients/useDeleteClient";
 import { ClientFormDialog } from "@/components/dialogs/ClientFormDialog";
+import { canAddOrDelete } from "@/lib/permissions";
 
 import { Phone, Mail as MailIcon, Copy, MessageCircle } from "lucide-react";
 import {
@@ -43,8 +45,10 @@ export default function ClientDetailPage() {
   const params = useParams();
   const clientId = params.id as string;
   const router = useRouter();
+  const { data: session } = useSession();
   const { data: client, isLoading } = useFetchClientById(clientId as string);
   const deleteMutation = useDeleteClient();
+  const canAdd = canAddOrDelete(session?.user?.role);
 
   const [contactOpen, setContactOpen] = useState(false);
 
@@ -78,38 +82,42 @@ export default function ClientDetailPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <ClientFormDialog client={client} />
+            {canAdd && (
+              <>
+                <ClientFormDialog client={client} />
 
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive" size="sm">
-                  Delete
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    Delete {client.name} ? It will delete all duedates related
-                    to client
-                  </AlertDialogTitle>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() =>
-                      deleteMutation.mutate(client._id, {
-                        onSuccess: () => {
-                          toast("Client deleted ✅");
-                          router.push("/app/clients");
-                        },
-                      })
-                    }
-                  >
-                    Delete
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" size="sm">
+                      Delete
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Delete {client.name} ? It will delete all duedates related
+                        to client
+                      </AlertDialogTitle>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() =>
+                          deleteMutation.mutate(client._id, {
+                            onSuccess: () => {
+                              toast("Client deleted ✅");
+                              router.push("/app/clients");
+                            },
+                          })
+                        }
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </>
+            )}
           </div>
         </CardHeader>
 
