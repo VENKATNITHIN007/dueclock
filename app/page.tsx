@@ -10,6 +10,7 @@ import {
   Mail
 } from "lucide-react";
 import { PricingDialog } from "@/components/landing/PricingDialog";
+import { DemoVideo } from "@/components/landing/DemoVideo";
 import SignInButton from "@/components/auth/login";
 
 export default async function HomePage() {
@@ -88,17 +89,8 @@ export default async function HomePage() {
                 </span>
               </div>
             </div>
-            {/* Demo Video Placeholder */}
-            <div className="flex items-center justify-center w-full h-full">
-              <div className="relative w-full aspect-video max-w-md rounded-2xl border-2 border-orange-500/30 bg-gradient-to-br from-slate-800 to-slate-900 shadow-2xl flex items-center justify-center group cursor-pointer hover:border-orange-500/50 transition-colors duration-200">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-16 h-16 rounded-full bg-orange-500/20 border-2 border-orange-500 shadow-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
-                    <svg className="w-8 h-8 text-orange-400" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><polygon points="9.5,7.5 16,12 9.5,16.5" /></svg>
-                  </div>
-                </div>
-                <span className="absolute bottom-4 left-1/2 -translate-x-1/2 text-xs text-slate-400 bg-slate-900/90 border border-slate-700 px-3 py-1 rounded-full shadow">Demo video coming soon</span>
-              </div>
-            </div>
+            {/* Demo Video */}
+            <DemoVideo />
           </div>
         </section>
 
@@ -144,17 +136,19 @@ export default async function HomePage() {
               <p className="mt-2 text-slate-300 text-sm">Yes, Dueclock allows you to easily import and export client data and duedates for seamless workflow management.</p>
             </details>
             <details className="group border border-slate-700 rounded-lg p-4 bg-slate-800/50 hover:bg-slate-800 transition-colors">
-              <summary className="font-semibold text-slate-200 cursor-pointer group-open:text-orange-400 transition-colors">Can I add my team?</summary>
-              <p className="mt-2 text-slate-300 text-sm">Yes, you can invite your team and assign roles for better collaboration.</p>
+              <summary className="font-semibold text-slate-200 cursor-pointer group-open:text-orange-400 transition-colors">how to add my team?</summary>
+              <div className="mt-2 text-slate-300 text-sm space-y-2">
+                <p className="font-medium text-slate-200">Follow these steps:</p>
+                <ol className="list-decimal list-inside space-y-1.5 ml-2">
+                  <li>Enter your team member&apos;s email address</li>
+                  <li>An invite code will be generated for that email</li>
+                  <li>Copy and share the code with your team member</li>
+                  <li>They sign in using the same email</li>
+                  <li>Click &quot;Join Existing Firm&quot; and enter the invite code</li>
+                </ol>
+              </div>
             </details>
-            <details className="group border border-slate-700 rounded-lg p-4 bg-slate-800/50 hover:bg-slate-800 transition-colors">
-              <summary className="font-semibold text-slate-200 cursor-pointer group-open:text-orange-400 transition-colors">Is my data secure?</summary>
-              <p className="mt-2 text-slate-300 text-sm">We use industry-standard security and encryption to keep your data safe.</p>
-            </details>
-            <details className="group border border-slate-700 rounded-lg p-4 bg-slate-800/50 hover:bg-slate-800 transition-colors">
-              <summary className="font-semibold text-slate-200 cursor-pointer group-open:text-orange-400 transition-colors">Automated client Remainder ?</summary>
-              <p className="mt-2 text-slate-300 text-sm">No, but we simplied communication through email and whatsapp </p>
-            </details>
+            
           </div>
         </div>
       </section>

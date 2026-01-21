@@ -66,32 +66,32 @@ export default function ImportClientsDialog() {
 
         // Name validation (required)
         if (!name) {
-          rowErrorsList.push("Name is required")
+          rowErrorsList.push("❌ Name is required and cannot be empty")
         }
 
         // Phone validation (if provided, must start with +91)
         if (phone) {
           if (!phone.startsWith("+91")) {
-            rowErrorsList.push("Phone number must start with +91")
+            rowErrorsList.push(`❌ Phone must start with +91 (got: "${phone}")`)
           } else if (!phoneRe.test(phone)) {
-            rowErrorsList.push("Phone number must be +91 followed by 10 digits (e.g., +919876543210)")
+            rowErrorsList.push(`❌ Phone must be +91 + 10 digits (e.g., +919876543210, got: "${phone}")`)
           }
         }
 
         // Email validation (if provided, must be valid)
         if (email && !emailRe.test(email)) {
-          rowErrorsList.push("Invalid email format")
+          rowErrorsList.push(`❌ Invalid email format (got: "${email}")`)
         }
 
         if (rowErrorsList.length > 0) {
-          rowErrors.push(`Row ${rowNum}: ${rowErrorsList.join(", ")}`)
+          rowErrors.push(`📍 Row ${rowNum} (${name || 'no name'}):\n  ${rowErrorsList.join('\n  ')}`)
         } else {
           payload.push({ name, phoneNumber: phone, email })
         }
       })
 
       if (rowErrors.length) {
-        setError(rowErrors.join("\n"))
+        setError(`Found ${rowErrors.length} error(s):\n\n${rowErrors.join('\n\n')}`)
         return
       }
 
@@ -105,7 +105,18 @@ export default function ImportClientsDialog() {
 
         const json = await res.json().catch(() => null)
         if (!res.ok) {
-          setError(json?.error || `Import failed: ${res.status}`)
+          // Check if it's a limit error
+          if (json?.limitReached) {
+            setError(`❌ Client Limit Reached\n\n${json.error}\n\nCurrent: ${json.current}/${json.limit} clients\nAttempted to import: ${json.attempted} clients\nYou can import: ${json.allowed} more client(s)${json.plan === 'free' ? '\n\nℹ️ Upgrade to Premium to add up to 100 clients!' : ''}`);
+          } else if (json?.details) {
+            // Validation errors with details
+            const errorLines = json.details.map((e: any) => 
+              `Row ${e.row}: ${e.errors.join(', ')}`
+            ).join('\n');
+            setError(`Validation failed:\n${errorLines}`);
+          } else {
+            setError(json?.error || `Import failed with status ${res.status}`);
+          }
           return
         }
 
@@ -136,17 +147,19 @@ export default function ImportClientsDialog() {
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <h3 className="text-sm font-semibold text-gray-900">CSV Format Requirements</h3>
+            <h3 className="text-sm font-semibold text-gray-900">📋 CSV Format Requirements</h3>
             <ul className="text-xs sm:text-sm text-gray-600 space-y-1.5 list-disc list-inside">
-              <li><strong>name</strong> - Required field</li>
-              <li><strong>phoneNumber</strong> - Optional, must start with +91</li>
-              <li><strong>email</strong> - Optional, valid email format</li>
+              <li><strong>name</strong> - Required (cannot be empty)</li>
+              <li><strong>phoneNumber</strong> - Optional, must be <code className="bg-gray-100 px-1 rounded">+919876543210</code> format</li>
+              <li><strong>email</strong> - Optional, must be valid email</li>
             </ul>
           </div>
 
           <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-            <p className="text-xs font-semibold mb-1.5 text-gray-900">Example CSV Header:</p>
+            <p className="text-xs font-semibold mb-1.5 text-gray-900">✅ Example CSV Header:</p>
             <code className="text-xs font-mono bg-white px-2 py-1.5 rounded border border-gray-200 block break-all">name,phoneNumber,email</code>
+            <p className="text-xs text-gray-600 mt-2">Example Row:</p>
+            <code className="text-xs font-mono bg-white px-2 py-1.5 rounded border border-gray-200 block break-all">John Doe,+919876543210,john@example.com</code>
           </div>
 
           {/* Custom File Upload Button with Hover State */}
@@ -174,8 +187,12 @@ export default function ImportClientsDialog() {
 
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-              <p className="text-xs sm:text-sm font-semibold text-red-800 mb-2">Validation Errors:</p>
-              <pre className="text-xs text-red-700 whitespace-pre-wrap font-sans max-h-40 overflow-y-auto">{error}</pre>
+              <p className="text-xs sm:text-sm font-semibold text-red-800 mb-2">❌ Import Failed:</p>
+              <div className="text-xs text-red-700 whitespace-pre-wrap font-sans max-h-60 overflow-y-auto bg-white p-2 rounded border border-red-100">
+                {error.split('\n').map((line, i) => (
+                  <div key={i} className="py-0.5">{line}</div>
+                ))}
+              </div>
             </div>
           )}
           {previewCount !== null && (

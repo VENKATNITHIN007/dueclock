@@ -4,8 +4,8 @@ import { NextResponse } from "next/server";
 
 
 
-// Allow only common static file extensions (images, fonts, css, js)
-const STATIC_FILE_EXT_RE = /\.(png|jpg|jpeg|webp|avif|svg|gif|ico|css|js|map|woff2?)$/i;
+// Allow only common static file extensions (images, fonts, css, js, videos)
+const STATIC_FILE_EXT_RE = /\.(png|jpg|jpeg|webp|avif|svg|gif|ico|css|js|map|woff2?|webm|mp4|mov|avi)$/i;
 
 const PUBLIC_ASSET_PREFIXES = [
   "/favicon.ico",
