@@ -77,13 +77,13 @@ export default function ClientsPage() {
       <div className="grid gap-3 md:hidden px-4 pb-28">
         {clients?.map((c) => (
           <Link key={c._id} href={`/app/clients/${c._id}`}>
-            <Card className="w-full rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer border-l-4 border-l-blue-500 bg-gradient-to-r from-blue-50/50 to-white">
+            <Card className="w-full rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer border-l-4 border-l-blue-500 bg-linear-to-r from-blue-50/50 to-white">
               <CardContent className="p-3">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-base text-gray-900 truncate">{c.name}</p>
                   </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
+                  <div className="flex items-center gap-2 shrink-0">
                     <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-red-100 text-red-700">
                       {c.pendingDues} {c.pendingDues === 1 ? 'due' : 'dues'}
                     </span>

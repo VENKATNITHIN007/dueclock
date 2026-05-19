@@ -3,6 +3,20 @@
 A clean, mobile-first PWA that helps Chartered Accountants track recurring compliance deadlines, manage clients, and communicate easily—all in one simple dashboard.
 
 **Live Demo:** [https://dueclock.in](https://dueclock.in)
+---
+
+## Screenshots
+
+<div align="center" style="max-width: 800px; margin: 0 auto;">
+  <!-- Desktop Screenshots: Each on their own row to prevent squishing -->
+  <img src="public/readme/image.png" alt="DueClock Dashboard (Desktop)" width="90%" style="border-radius: 8px; border: 1px solid #eaeaea; margin-bottom: 16px;">
+  <br/>
+  <img src="public/readme/image2.png" alt="DueClock Compliance Tracking (Desktop)" width="90%" style="border-radius: 8px; border: 1px solid #eaeaea; margin-bottom: 24px;">
+  <br/>
+  <!-- Mobile Screenshots: Side-by-side in the same row -->
+  <img src="public/readme/image3.png" alt="DueClock Mobile Dashboard (Mobile)" width="45%" style="border-radius: 8px; border: 1px solid #eaeaea; margin: 1%;">
+  <img src="public/readme/image4.png" alt="DueClock Client List (Mobile)" width="45%" style="border-radius: 8px; border: 1px solid #eaeaea; margin: 1%;">
+</div>
 
 ---
 
@@ -28,24 +42,13 @@ So I built DueClock—a simple dashboard that automates recurring due dates, man
 
 ---
 
-## Authentication
+## Features & Authentication
 
-Session-based auth via NextAuth with JWT inside the session for API validation. Middleware protects all dashboard routes—users must be logged in to access any data.
-
----
-
-## Why I Built It
-
-Some CA firms still use Excel or WhatsApp for recurring deadlines, which is unreliable and hard to manage. DueClock gives them an organized workflow, simple dashboard, and reliable due-date manager. Built as an MVP to test real user needs.
-
----
-
-## Features
-
-- Fast and secure Google login
-- Automatic next due date creation after completing a deadline
-- Easy client communication via WhatsApp or email
-- PWA—can be installed like a native app from the browser
+- **Secure Google Login & Auth**: Powered by NextAuth with JWT session validation. Route protection middleware ensures that all dashboard and API routes require authentication.
+- **Multiple Clients per Due Date**: Associate and manage multiple clients under a single due date with one click.
+- **Seamless Communication**: Easily contact clients through bulk email and WhatsApp templates.
+- **Team Management & Firm Activity**: Add team members to your CA firm and track all compliance and client activities in real-time.
+- **PWA Ready**: Mobile-first design that can be installed directly from the browser like a native app.
 
 ---
 
