@@ -47,7 +47,8 @@ So I built DueClock—a simple dashboard that automates recurring due dates, man
 - **Secure Google Login & Auth**: Powered by NextAuth with JWT session validation. Route protection middleware ensures that all dashboard and API routes require authentication.
 - **Multiple Clients per Due Date**: Associate and manage multiple clients under a single due date with one click.
 - **Seamless Communication**: Easily contact clients through bulk email and WhatsApp templates.
-- **Team Management & Firm Activity**: Add team members to your CA firm and track all compliance and client activities in real-time.
+- **Role-based Team Management (Admin / Staff)**: Add team members to your CA firm with specific roles and permissions while tracking firm compliance activity logs in real-time.
+- **CSV Client Import & Export**: Instantly import all your clients and due dates via CSV files for a quick setup.
 - **PWA Ready**: Mobile-first design that can be installed directly from the browser like a native app.
 
 ---
@@ -143,6 +144,4 @@ npm run dev
 
 ## Future Improvements
 
-- Automatic reminder notifications
-- User roles (Admin / Staff) for firms
-- Client import via CSV
+- Automatic reminder notifications (automated email or WhatsApp scheduling)
